@@ -86,6 +86,26 @@ export class DashboardComponent {
       ],
       moreInfo:"View Summary"
     },
+    { 
+      latestUpdate: "2nd March, 2025", 
+      title: "Release Notes Summary", 
+      subTitle:"Added batch processing for large transactions to increase efficiency.",
+      updateList: [
+        "Improved error logging to simplify troubleshooting for failed payments.",
+        "Added support for Instant Payments in new regions, including SEPA Instant Credit Transfer.",
+      ],
+      moreInfo:"View Summary"
+    },
+    { 
+      latestUpdate: "2nd March, 2025", 
+      title: "Release Notes Summary", 
+      subTitle:"Added batch processing for large transactions to increase efficiency.",
+      updateList: [
+        "Improved error logging to simplify troubleshooting for failed payments.",
+        "Added support for Instant Payments in new regions, including SEPA Instant Credit Transfer.",
+      ],
+      moreInfo:"View Summary"
+    },
   ]
   categoryData = [
     { 
