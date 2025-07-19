@@ -2,17 +2,17 @@
     <!-- dropdown section -->
     <div class="flex justify-between mb-2 ml-[60px] md:ml-0">
         <div class="flex relative">
-            <div class="flex gap-[16px]" 
+            <div class="flex gap-2" 
                 [ngClass]="(!aciPaymentHubTooltipDone)? 'bg-[#F7F8FA] p-[16px] rounded-[8px] tooltip' : ''" 
                 [ngClass]="aciPaymentHubTooltip? 'bg-[#F7F8FA] p-[16px] rounded-[8px] tooltip' : ''" >
-                <!-- Select Product dropdown section -->
-                <div class="relative w-70">
-                    <!-- Product Dropdown Button -->
+                <!-- Select States dropdown section -->
+                <div class="relative w-30">
+                    <!-- States Dropdown Button -->
                     <button
                         type="button"
                         (click)="toggleProductDropdown()"
                         class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%] whitespace-nowrap overflow-hidden truncate w-[18ch]">
-                        {{ selectedProduct || 'Select a Product'}}
+                        {{ selectedStates || 'States'}}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="h-5 w-5 text-gray-500"
@@ -26,7 +26,7 @@
                             />
                         </svg>
                     </button>
-                    <!-- Product Dropdown Menu -->
+                    <!-- States Dropdown Menu -->
                     <div
                         *ngIf="isProductDropdownOpen"
                         class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
@@ -40,6 +40,11 @@
                             </li>
                         </ul>
                     </div>
+                </div>
+                <!--/* Filter */-->
+                <div class="my-auto bg-white border border-[#D5D7DA] rounded-[8px] px-[16px] py-[10px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-search-text-color text-sm font-medium">
+                    <span class="w-[18.33px] h-[18.33px] bg-[url('./app/resources/icons/filter-icon.svg')]">
+                    </span>
                 </div>
             </div>
             <!-- Select Product dropdown tooltip -->

@@ -31,8 +31,7 @@ export class DashboardComponent {
   documentationGeneratingPage = false; 
   documentationGeneratedPage = false; 
 
-  selectedProduct: string = "";
-  products: string[] = [];
+  selectedStates: string = "";
   personaWidgetList: string[] = [];
   selectedWidgetList: string[] = [];
   selectedCustomizeWidgets: string[] = [];
@@ -46,19 +45,18 @@ export class DashboardComponent {
 
     this.personaWidgetList = this.onboardingService.getPersonaWidgetList()
     this.selectedWidgetList = this.onboardingService.getSelectedWidgetList()
-    this.products = this.onboardingService.getProductList();
-    this.selectedProduct = this.onboardingService.getSelectedProduct();
     
     this.documentationLandingPage = this.documentationService.getDocumentationLandingPage();
     this.documentationGeneratingPage = this.documentationService.getDocumentationGeneratingPage(); 
     this.documentationGeneratedPage = this.documentationService.getDocumentationGeneratedPage(); 
   }
+  products = ["Florida", "Texas", "California"]
   isProductDropdownOpen = false;
   toggleProductDropdown() {
     this.isProductDropdownOpen = !this.isProductDropdownOpen;
   }
   selectProduct(product: string) {
-    this.selectedProduct = product;
+    this.selectedStates = product;
     this.isProductDropdownOpen = false;
   }
   // cards data
