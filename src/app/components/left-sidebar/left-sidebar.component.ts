@@ -40,10 +40,7 @@ export class LeftSidebarComponent {
     this.userService.userName$.subscribe(name => {
       this.userName = name;
     });
-    this.userService.userRole$.subscribe(role => {
-      this.userRole = role;
-    });
-
+    
     this.userService.userImageUrl$.subscribe(imageUrl => {
       this.profileImageUrl = imageUrl;
     });
