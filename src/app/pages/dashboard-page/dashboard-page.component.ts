@@ -1,5 +1,4 @@
-import { Component, HostListener, OnInit, signal } from '@angular/core';
-import { RouterOutlet} from '@angular/router';
+import { Component, signal } from '@angular/core';
 import { LeftSidebarComponent } from '../../components/left-sidebar/left-sidebar.component';
 import { MainContentComponent } from '../../components/main-content/main-content.component';
 

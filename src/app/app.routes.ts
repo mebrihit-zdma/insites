@@ -2,16 +2,10 @@ import { Routes} from '@angular/router';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DocumentationComponent } from './components/documentation/documentation.component';
 import { ChatComponent } from './components/chat/chat.component';
-import { WelcomePageComponent } from './pages/welcome-page/welcome-page.component';
-import { OnBoardingPageComponent } from './pages/on-boarding-page/on-boarding-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
-import { MsalGuard } from '@azure/msal-angular';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'welcome-page', pathMatch: 'full' },
-    { path: 'welcome-page', component: WelcomePageComponent},
-    // { path: 'welcome-page',component: WelcomePageComponent, canActivate: [MsalGuard]},
-    { path: 'on-boarding-page', component: OnBoardingPageComponent },
+    { path: '', redirectTo: 'dashboard-page', pathMatch: 'full' },
     { path: 'dashboard-page', 
       component: DashboardPageComponent,
       children: [
