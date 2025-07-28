@@ -9,12 +9,13 @@ import { OnboardingService } from '../../services/onboarding.service';
 import { TooltipService } from '../../services/tooltip.service';
 import { DocumentationService } from '../../services/documentation.service';
 import { Router } from '@angular/router';
+import { DoughnutChartComponent } from '../doughnut-chart/doughnut-chart.component';
+import { StackedareaChartComponent } from '../stackedarea-chart/stackedarea-chart.component';
 import { BarChartComponent } from '../barchart/barchart.component';
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, SummaryCardComponent, NgxChartsModule,BarChartComponent, ReleaseHistoryTableComponent],
+  imports: [CommonModule, FormsModule, SummaryCardComponent, NgxChartsModule, BarChartComponent, StackedareaChartComponent, DoughnutChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
