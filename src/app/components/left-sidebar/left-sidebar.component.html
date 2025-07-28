@@ -23,10 +23,10 @@
         <!-- playbook-logo section -->
         <div class="flex gap-16 w-full  justify-center items-center md:h-auto">
           <div class="flex gap-2">
-            <span class="w-[21.69px] h-[27.9px] bg-[url('./app/resources/icons/blue-book-icon.svg')] rounded-lg">
+            <span class="w-[31.34px] h-[31.34px] bg-[url('./app/resources/icons/insites_logo.svg')] rounded-lg">
             </span>
             @if (!isLeftSidebarCollapsed()) {
-              <div class="text-primary font-medium text-2xl font-(family-name:BentonSans)">Playbook</div>
+              <div class="text-[#0A7C00] font-semibold text-2xl">Insites</div>
             }
           </div>
           <!-- close sidebar section -->
@@ -134,8 +134,9 @@
           <div class="flex gap-2">
             <!-- profile first letter section-->
             <div class="flex justify-start items-center gap-[10px]">
-                <span class="text-primary bg-[#e9eef8] flex rounded-[200px] w-[40px] h-[40px] justify-center items-center">{{ getFirstLetter(userName) }}</span>
+                <!-- <span class="text-primary bg-[#e9eef8] flex rounded-[200px] w-[40px] h-[40px] justify-center items-center">{{ getFirstLetter(userName) }}</span> -->
                 <!--/* <img class="border border-gray-300 rounded-[200px] w-[40px] h-[40px] justify-center items-center" *ngIf="profileImageUrl" [src]="profileImageUrl" alt="User profile picture"> */-->
+                <img class="border border-gray-300 rounded-[200px] w-[40px] h-[40px] justify-center items-center  bg-[url('./app/resources/icons/insites_avatar.svg')]" alt="User profile picture">
             </div>
             <!-- profile name section-->
             @if (!isLeftSidebarCollapsed()) {

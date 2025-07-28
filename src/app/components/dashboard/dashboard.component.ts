@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
-import { SummaryCardComponent } from '../../components/cards/summary-card/summary-card.component';
+// import { SummaryCardComponent } from '../../components/cards/summary-card/summary-card.component';
+import { InsitesCardComponent } from '../../components/cards/insites-card/insites-card.component';
 import { ReleaseHistoryTableComponent } from '../../components/tables/release-history-table/release-history-table.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { UserService } from '../../services/user.service';
@@ -15,7 +16,7 @@ import { BarChartComponent } from '../barchart/barchart.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, SummaryCardComponent, NgxChartsModule, BarChartComponent, StackedareaChartComponent, DoughnutChartComponent],
+  imports: [CommonModule, FormsModule, InsitesCardComponent, NgxChartsModule, BarChartComponent, StackedareaChartComponent, DoughnutChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -25,7 +26,7 @@ export class DashboardComponent {
 
   listNumber = 2;
   userName: string | null = 'User Name';
-  userRole: string | null = 'Product Owner';
+  userRole: string | null = 'Marketing Manager';
 
   // documentation Pages
   documentationLandingPage = false;
