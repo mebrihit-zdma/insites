@@ -52,7 +52,8 @@ html, body{
     height: 100%;
     position:fixed;
     
-    background: url("./app/resources/images/aci-bg-image.svg");
+    background: url("./app/resources/images/insites-bg-image.svg");
+    /* background: linear-gradient(242.27deg, #569800 4%, #E7FFC9 43.62%, #00A748 85.58%); */
     background-size: cover;
     background-position: center; 
     background-attachment: fixed;

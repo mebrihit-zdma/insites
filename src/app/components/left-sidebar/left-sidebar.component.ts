@@ -24,7 +24,7 @@ export class LeftSidebarComponent {
   }
   
   userName: string | null = 'User Name';
-  userRole: string | null = 'Product Owner';
+  userRole: string | null = 'Marketing Manager';
   profileImageUrl: string | null = null;
   searchValue: string = "";
   // documentation Pages

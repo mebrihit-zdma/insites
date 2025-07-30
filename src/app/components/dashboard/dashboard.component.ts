@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
-import { SummaryCardComponent } from '../../components/cards/summary-card/summary-card.component';
+// import { SummaryCardComponent } from '../../components/cards/summary-card/summary-card.component';
+import { InsitesCardComponent } from '../../components/cards/insites-card/insites-card.component';
 import { ReleaseHistoryTableComponent } from '../../components/tables/release-history-table/release-history-table.component';
-import { BugFixesTableComponent } from '../../components/tables/bug-fixes-table/bug-fixes-table.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { UserService } from '../../services/user.service';
 import { OnboardingService } from '../../services/onboarding.service';
 import { TooltipService } from '../../services/tooltip.service';
 import { DocumentationService } from '../../services/documentation.service';
 import { Router } from '@angular/router';
-
+import { DoughnutChartComponent } from '../doughnut-chart/doughnut-chart.component';
+import { StackedareaChartComponent } from '../stackedarea-chart/stackedarea-chart.component';
+import { BarChartComponent } from '../barchart/barchart.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, SummaryCardComponent, NgxChartsModule, ReleaseHistoryTableComponent, BugFixesTableComponent],
+  imports: [CommonModule, FormsModule, InsitesCardComponent, NgxChartsModule, BarChartComponent, StackedareaChartComponent, DoughnutChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -24,7 +26,7 @@ export class DashboardComponent {
 
   listNumber = 2;
   userName: string | null = 'User Name';
-  userRole: string | null = 'Product Owner';
+  userRole: string | null = 'Marketing Manager';
 
   // documentation Pages
   documentationLandingPage = false;

@@ -15,7 +15,7 @@ export class AppComponent{
     private userService: UserService,
   ) { }
   ngOnInit(): void {
-    this.userService.setUserName("Joanna");
+    this.userService.setUserName("Patty");
   }
 }
 

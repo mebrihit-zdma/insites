@@ -12,13 +12,19 @@ import {
   MsalGuard,
   MsalBroadcastService
 } from '@azure/msal-angular';
+import {
+provideCharts,
+withDefaultRegisterables,
+} from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
     provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideCharts(withDefaultRegisterables()),
     provideClientHydration(withEventReplay()),
+    
     {
       provide: MSAL_INSTANCE,
       useFactory: () => {
