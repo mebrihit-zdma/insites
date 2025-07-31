@@ -102,7 +102,7 @@ export class ChatComponent {
   toggleProductDropdown() {
     this.isProductDropdownOpen = !this.isProductDropdownOpen;
   }
-  selectProduct(product: string) {
+  selectProduct(product: string,index: number) {
     this.selectedProduct = product;
     this.isProductDropdownOpen = false;
   }

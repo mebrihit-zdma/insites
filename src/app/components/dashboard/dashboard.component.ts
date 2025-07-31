@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { DoughnutChartComponent } from '../doughnut-chart/doughnut-chart.component';
 import { StackedareaChartComponent } from '../stackedarea-chart/stackedarea-chart.component';
 import { BarChartComponent } from '../barchart/barchart.component';
+    import { CardData } from '../../models/insites.card.model'
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -32,11 +33,18 @@ export class DashboardComponent {
   documentationLandingPage = false;
   documentationGeneratingPage = false; 
   documentationGeneratedPage = false; 
+  products = [ "North Carolina",
+    "Florida",
+    "Texas",
+    "Illinois",
+    "Virginia"]
 
-  selectedStates: string = "";
+  selectedState: string = this.products[0];
   personaWidgetList: string[] = [];
   selectedWidgetList: string[] = [];
   selectedCustomizeWidgets: string[] = [];
+  selectedIndex:number = 0;
+
   ngOnInit() {
     this.userService.userName$.subscribe(name => {
       this.userName = name;
@@ -52,16 +60,40 @@ export class DashboardComponent {
     this.documentationGeneratingPage = this.documentationService.getDocumentationGeneratingPage(); 
     this.documentationGeneratedPage = this.documentationService.getDocumentationGeneratedPage(); 
   }
-  products = ["Florida", "Texas", "California"]
+
   isProductDropdownOpen = false;
   toggleProductDropdown() {
+
     this.isProductDropdownOpen = !this.isProductDropdownOpen;
   }
-  selectProduct(product: string) {
-    this.selectedStates = product;
+  selectProduct(product: string,index: number) {
+    this.selectedState = product;
+    this.selectedIndex=index
     this.isProductDropdownOpen = false;
   }
-  // cards data
+  // cards 
+
+   carddata: CardData[][] =[[
+        { label: "Cognitive", data:"17",heading:"Top Dx in" },
+         { label: "Dementia", data:"14",heading:"Top Dx in" },
+         { label: "479K", data:"10",heading:"Caregivers in" },
+      ],[
+        { label: "Stroke", data:"18.5",heading:"Top Dx in" },
+         { label: "Dementia", data:"15",heading:"#2 Dx in" },
+         { label: "806K", data:"27",heading:"Caregivers in" },
+      ],[
+        { label: "Alzheimer's", data:"15",heading:"Top Dx in" },
+         { label: "Dementia", data:"8",heading:"#2 Dx in" },
+         { label: "910K", data:"35" ,heading:"Caregivers in"},
+      ],[
+        { label: "Parkinson's", data:"20",heading:"Top Dx in"},
+         { label: "Cognitive", data:"14",heading:"#2 Dx in" },
+         { label: "759K", data:"22",heading:"Caregivers in" },
+      ],[
+        { label: "Stroke", data:"17" ,heading:"Top Dx in" },
+         { label: "Cognitive", data:"15",heading:"#2 Dx in" },
+         { label: "600K", data:"28",heading:"Caregivers in" },
+      ]];
   productLatestUpdates = [
     { 
       latestUpdate: "7th March, 2025", 

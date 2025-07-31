@@ -12,8 +12,11 @@ import { Router } from '@angular/router';
 })
 export class InsitesCardComponent {
   @Input() data!: any; // Input property to receive data from the parent
+  @Input() id!: any;
+  @Input() title!: any;
+  constructor( private router: Router ) {
 
-  constructor( private router: Router ) {}
+  }
 
   viewMore(){
     this.router.navigate(['/dashboard-page/chat']);

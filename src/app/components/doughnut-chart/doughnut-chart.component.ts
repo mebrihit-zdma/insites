@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartData, ChartEvent, ChartType,ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+  import * as pluginAnnotation from 'chartjs-plugin-annotation';
+ import { Chart, registerables } from 'chart.js';
 
 @Component({
   selector: 'app-doughnut-chart',
@@ -12,6 +14,11 @@ import { BaseChartDirective } from 'ng2-charts';
 
 })
 export class DoughnutChartComponent {
+      constructor() {
+        Chart.register(...registerables); // Register the core Chart.js components
+        Chart.register(pluginAnnotation); // Register the annotation plugin
+    }
+
 
         public doughnutChartOptions: ChartConfiguration['options'] = {
           responsive: true,
@@ -23,27 +30,23 @@ export class DoughnutChartComponent {
               usePointStyle: true,
               pointStyle: 'circle', // Optional: explicitly set point style to circle
             },
-            }
-      //     annotation: {
-      //   annotations: [
-      //     {
-      //       type: 'line',
-      //       scaleID: 'x',
-      //       value: 'March',
-      //       borderColor: 'orange',
-      //       borderWidth: 2,
-      //       label: {
-      //         display: true,
-      //         position: 'center',
-      //         color: 'orange',
-      //         content: 'LineAnno',
-      //         font: {
-      //           weight: 'bold',
-      //         },
-      //       },
-      //     },
-      //   ],
-      // },
+            },
+
+          annotation: {
+                  annotations: {
+        label1: {
+          type: 'label',
+          xValue: 50,
+          yValue: 60,
+          position:'center',
+          backgroundColor: 'rgba(245,245,245)',
+          content: ['This is my text'],
+          font: {
+            size: 18
+          }
+        }
+      }
+      },
           }
     };
   public doughnutChartLabels: string[] = [
@@ -51,12 +54,16 @@ export class DoughnutChartComponent {
     'Florida'
   ];
 
+  ngOnInit() {
+
+  }
+
 
 
   public doughnutChartData: ChartData<'doughnut'> = {
     labels: this.doughnutChartLabels,
     datasets: [
-      { data: [29.4,(100-29.4)] ,    backgroundColor: [
+      { data: [29.4,(100-29.4)],    backgroundColor: [
       '#075300',
       '#E7F6E5'
     ]},
@@ -67,6 +74,7 @@ export class DoughnutChartComponent {
     ],
   };
   public doughnutChartType: ChartType = 'doughnut';
+
 
   // events
   public chartClicked({

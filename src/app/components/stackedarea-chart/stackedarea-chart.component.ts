@@ -19,12 +19,21 @@ export class StackedareaChartComponent {
             mode: 'index',
             intersect: false,
           },
+          legend: {
+              display: true,
+              position: 'top',
+              labels: {
+              usePointStyle: true,
+               //boxWidth: 0, 
+              pointStyle: 'circle', // Optional: explicitly set point style to circle
+            },
+            },
         },
-          elements: {
-          line: {
-            tension: 0.5,
-          },
-        },
+        //   elements: {
+        //   line: {
+        //     tension: 0.3,
+        //   },
+        // },
         scales: {
           x: {
             stacked: true, // Crucial for stacking on the x-axis
@@ -35,26 +44,32 @@ export class StackedareaChartComponent {
         },
       };
 
-      public areaChartLabels: String[] = ['January', 'February', 'March', 'April', 'May'];
+      public areaChartLabels: String[] = ['Jan 2022', 'Jun 2022', 'Jan 2023', 'Jun 2023', 'Jan 2024','Jun 2024','Jan 2025'];
       public areaChartType: ChartType = 'line'; // Use 'line' for area charts
       public areaChartLegend = true;
 
-      public areaChartData: ChartDataset[] = [
+      getRandomDataPoints(count: number): number[] {
+      return Array.from({ length: count }, () => Math.floor(Math.random() * 50) + 1);
+    }
+
+      public areaChartData: ChartDataset[]
+       = [
         {
-          data: [65, 59, 80, 81, 56],
-          label: 'Series A',
+          data:  [8, 9, 11,10,10.5,17, 22, 27, 30, 32],
+          label: 'Speech 32.8%',
          // fill: 'origin', // Fills the area below the line
-          backgroundColor: 'rgba(77, 189, 116, 0.4)', // Example color
-          borderColor: 'rgba(77, 189, 116, 1)',
-          fill: false
+         // backgroundColor: 'rgba(77, 189, 116, 0.4)', // Example color
+         backgroundColor:'#075300',
+          borderColor: '#075300',
+          //tension: 0.3,
         },
         {
-          data: [28, 48, 40, 19, 86],
-          label: 'Series B',
-         // fill: '-1', // Fills the area relative to the previous dataset
-          backgroundColor: 'grey',
-          borderColor: 'rgba(255, 99, 132, 1)',
-           fill: false
+          data:  [10, 11, 15, 25, 35, 45, 50, 47],
+          label: 'Vision 32.8%',
+          //fill: '-1', // Fills the area relative to the previous dataset
+          backgroundColor: '#4ABB40',
+          borderColor: '#4ABB40',
+          // tension: 0.3,
         },
       ];
     }

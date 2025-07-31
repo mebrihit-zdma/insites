@@ -1,26 +1,26 @@
 <div class="h-full w-full flex gap-4">
     
     <!-- @if (!isLeftSidebarCollapsed()) { -->
-    <div class="flex flex-col w-[10%] justify-center ">
+    <!-- <div class="flex flex-col w-[10%] justify-center ">
         <div class="flex-1 overflow-y-auto p-4 rounded-lg">
             <div>
             </div>
         </div>
-    </div>
+    </div> -->
 <!-- } -->
-    <div class=" flex flex-col gap-4 w-[75%]  gap-0 sm:me-4  ">
+    <div class=" flex flex-col gap-4 w-[90%]  gap-0 sm:me-4  ">
         <!-- dropdown section -->
         <div class="flex justify-between mb-2 ml-[60px] md:ml-0">
             <div class="flex">
                 <div class="flex gap-2">
                     <!-- Select States dropdown section -->
-                    <div class="relative w-30">
+                    <div class="relative w-40">
                         <!-- States Dropdown Button -->
                         <button
                             type="button"
                             (click)="toggleProductDropdown()"
                             class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%] whitespace-nowrap overflow-hidden truncate w-[18ch]">
-                            {{ selectedStates || 'States'}}
+                            {{ selectedState}}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 class="h-5 w-5 text-gray-500"
@@ -40,8 +40,9 @@
                             class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
                             <ul>
                                 <li
-                                    *ngFor="let product of products"
-                                    (click)="selectProduct(product)"
+                                    *ngFor="let product of products;let i = index"  
+                                    (click)="selectProduct(product,i)"
+                                    id={{i}}
                                     class="text-dropdown-text-color cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0"
                                 >
                                     {{ product }}
@@ -73,30 +74,37 @@
             </div>
         </div>
         <!-- summary card section -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4">
             <!-- summary card
             <div *ngFor="let upDate of releaseNotesSummary">
                 <app-summary-card [data]="upDate"/>
             </div> -->
-
+             <!-- <div
+                                    *ngFor="let product of selectedInsitesData;let i = index"  
+                                    (click)="selectProduct(product,i)"
+                                    id={{i}}
+                                    class="text-dropdown-text-color cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0"
+                                >
+                                    {{ product }}
+            </div> -->
             <div>
-                <app-insites-card/>
+                <app-insites-card [data]="carddata[selectedIndex][0]" [title]="selectedState"/>
             </div>
             <div>
-                <app-insites-card/>
+                <app-insites-card [data]="carddata[selectedIndex][1]" [title]="selectedState"/>
             </div>
             <div>
-                <app-insites-card/>
+                <app-insites-card [data]="carddata[selectedIndex][2]" [title]="selectedState"/>
             </div>
         </div>
         <!-- Chart display section -->
         <div class="grid lg:grid-cols-1 gap-4">
             <div  class="bg-white border border-[#D0D1D4] rounded-lg p-4">
-                <div class="w-1/2 flex gap-[8px] justify-between"> 
+                <div class="flex gap-[8px] justify-between"> 
                     <p class="text-base font-bold text-[#22252B] self-center">Customer Needs Predicted</p>
                         <button class="flex gap-[4px] items-end">
                             <div class="w-[19px] h-[20px] bg-[url('./app/resources/icons/orange-stars.svg')]"></div>
-                            <p class="text-sm font-medium  flex  text-[#FF6632]">Ask Insites</p>
+                            <p class="text-xs font-medium  flex  text-[#FF6632]">Ask Insites</p>
                         </button> 
                     
                 </div>
@@ -112,11 +120,11 @@
                 <div class="flex gap-[8px] justify-between"> 
                         <button class="flex gap-[4px] items-start">
                             <div class="w-[19px] h-[20px] bg-[url('./app/resources/icons/orange-stars.svg')]"></div>
-                            <p class="text-sm font-medium  flex  text-[#FF6632]">Ask Insites</p>
+                            <p class="text-xs font-medium  flex  text-[#FF6632]">Ask Insites</p>
                         </button> 
                         <button class="flex gap-[8px] items-end">
                             <div class="w-[16px] h-[16px]  bg-[url('./app/resources/icons/icon_link.svg')] bg-no-repeat self-center"></div>
-                            <p class="text-sm font-normal text-[#737780]  self-center">sources</p>
+                            <p class="text-xs font-normal text-[#737780]  self-center">sources</p>
                         </button> 
                     
                 </div>
@@ -126,7 +134,7 @@
                     <p class="text-base font-bold text-[#22252B] self-center">Top 5 States by Primary Dx</p>
                         <button class="flex gap-[4px] items-end">
                             <div class="w-[19px] h-[20px] bg-[url('./app/resources/icons/orange-stars.svg')]"></div>
-                            <p class="text-sm font-medium  flex  text-[#FF6632]">Ask Insites</p>
+                            <p class="text-xs font-medium  flex  text-[#FF6632]">Ask Insites</p>
                         </button>                     
                 </div>
                 <app-bar-chart></app-bar-chart>
@@ -134,7 +142,7 @@
         </div>
     </div>
     <!-- chat section -->
-    <div class="flex flex-col w-[15%] justify-center ">
+    <div class="flex flex-col w-[10%] justify-center ">
         <div class="flex-1 overflow-y-auto p-4 rounded-lg">
             <div>
             </div>

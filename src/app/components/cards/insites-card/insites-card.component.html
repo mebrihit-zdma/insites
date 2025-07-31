@@ -1,16 +1,16 @@
 <div class="bg-white border border-[#D0D1D4] rounded-lg  flex flex-col justify-evenly gap-[16px] px-[8px] py-[8px]">
     
         <div class="flex gap-[8px] justify-between"> 
-            <p class="text-xs font-normal text-[#333740] self-center">Caregivers in Florida</p>
+            <p class="text-xs font-normal text-[#333740] self-center">{{ data.heading}} {{ title }}</p>
                 <button class="flex gap-[4px] items-end">
                     <div class="w-[19px] h-[20px] bg-[url('./app/resources/icons/orange-stars.svg')]"></div>
-                    <p class="text-sm font-medium  flex  text-[#FF6632]">Ask Insites</p>
+                    <p class="text-xs font-medium  flex  text-[#FF6632]">Ask Insites</p>
                 </button> 
             
         </div>
     
     <div class="flex flex-col gap-[4px]">
-        <p class="mt-[8px] text-[32px] font-semibold">806K</p>
+        <p class="mt-[8px] text-[32px] font-semibold">{{ data.label }}</p>
     </div>
      <!-- link section -->
      <div class="flex flex-row lg:gap-[4px] sm:gap-[4px] justify-between">
@@ -24,7 +24,7 @@
             <button class="flex gap-[4px]">
                 
                 <div class="w-[14px] h-[9px] bg-[url('./app/resources/icons/icon_increase.svg')] bg-no-repeat self-center"></div>
-                <p class="text-xs font-normal text-[#0DA500] inline-block">34%</p>
+                <p class="text-xs font-normal text-[#0DA500] inline-block">{{ data.data }}%</p>
            
             </button> 
             </div>
