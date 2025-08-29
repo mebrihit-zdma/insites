@@ -18,7 +18,18 @@ export interface ResponseMessage {
     sources?: ResponseSource[];
     follow_up?: string[];
     loading?: boolean;
-    timestamp?: string;
+    timestamp?: Date;
+    liked?: boolean;
+    disliked?: boolean;
+    attachment?: {
+        name: string;
+        size: string;
+        type: string;
+    };
+    code?: {
+        language: string;
+        content: string;
+    };
 }
 export interface AnswerSource {
     fileName: string;
@@ -34,6 +45,7 @@ export interface ChatMessage {
 export interface ChatHistory {
     question: string;
     sessionId: string;
+    createdAt?: Date;
 }
 export interface SavedChats {
     question: string;

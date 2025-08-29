@@ -1,573 +1,597 @@
-<div class="h-full w-full" [ngClass]="(!documentationLandingPage)? 'hidden' : 'block'">
-    <div class="flex flex-col gap-8 lg:mx-16">
-        <!-- dropdown section -->
-        <div class="flex justify-between ml-[60px] md:ml-0">
-            <div class="flex relative">
-                <div class="flex gap-[16px]">
-                    <!-- Select Product dropdown section -->
-                    <div class="relative w-70">
-                        <!-- Product Dropdown Button -->
-                        <button
-                            type="button"
-                            (click)="toggleProductDropdown()"
-                            class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%] whitespace-nowrap overflow-hidden truncate w-[18ch]">
-                            {{ selectedProduct || 'Select a Product'}}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-500"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                        <!-- Product Dropdown Menu -->
-                        <div
-                            *ngIf="isProductDropdownOpen"
-                            class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                            <ul>
-                                <li
-                                    *ngFor="let product of products"
-                                    (click)="selectProduct(product)"
-                                    class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0"
-                                >
-                                    {{ product }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- bell icon -->
-            <!--/* <span class="w-[22.76px] h-[29.25px] bg-[url('./app/resources/icons/blue-bell-icon.svg')]"></span> */-->
-        </div>
-        <!-- table section -->
-        <div class="flex flex-col gap-4">
-            <!-- release history search, filter, and create documentation section -->
-            <div class="flex flex-col gap-[8px]" *ngIf="userRole === 'Product Owner'">
-                <div class="flex flex-col md:flex-row gap-4 justify-between">
-                    <h2>Generated Documentation History</h2>
-                    <!-- Create Documentation -->
-                    <div class="flex gap-[16px] relative justify-center">
-                        <div>
-                            <button class="text-white bg-primary flex items-center gap-[8px] px-[14px] py-[10px] rounded-lg  border border-[#D5D7DA] active-button" (click)="goToDocumentationGeneratingPage()">
-                                <span class="w-[18.33px] h-[18.33px] bg-[url('./app/resources/icons/white-stars.svg')]">
-                                </span>
-                                Create Documentation
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-4 justify-between">
-                    <!-- Search Filter -->
-                    <div class="flex flex-col md:flex-row gap-[8px] justify-center">
-                        <!--/* Search */-->
-                        <div class="my-auto bg-white border border-[#D5D7DA] rounded-[8px] px-[8px] py-[10px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-search-text-color text-sm font-medium w-[100%] md:w-[273px]">
-                            <span class="flex justify-center items-center w-[12.4px] h-[12.4px] bg-[url('./app/resources/icons/search-icon.svg')]"></span>
-                            <input type="text" placeholder="Search"/>
-                        </div>
-                        <!-- Filter section -->
-                        <div class="relative w-[100%] md:w-70">
-                            <!-- Filter Dropdown Button -->
-                            <button
-                                type="button"
-                                (click)="toggleFilterDropdown()"
-                                class="my-auto bg-white border border-[#D5D7DA] rounded-[8px] px-[16px] py-[10px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-search-text-color text-sm font-medium w-full md:w-50">
-                                <span class="w-[18.33px] h-[18.33px] bg-[url('./app/resources/icons/filter-icon.svg')]">
-                                </span>
-                                Filter
-                            </button>
-                            <!-- Filter Dropdown Menu -->
-                            <div
-                                *ngIf="isFilterDropdownOpen"
-                                class="absolute bg-white border border-gray-200 rounded-md shadow-lg z-10 w-50">
-                                <ul>
-                                    <li
-                                        *ngFor="let filter of filters"
-                                        class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0 text-[#919399]"
-                                    >
-                                        {{ filter }}
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- bug fixes search section -->
-            <div class="flex justify-between items-center" *ngIf="userRole === 'Help24 Analyst'">
-                <p class="font-medium text-base text-[#19213D]">Bug Fixes in the latest release</p>
-                <div>
-                    <div class="my-auto bg-white border border-[#D5D7DA] rounded-[8px] px-[16px] py-[10px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-search-text-color text-sm font-medium w-[273px]">
-                        <span class="flex justify-center items-center w-[12.4px] h-[12.4px] bg-[url('./app/resources/icons/search-icon.svg')]"></span>
-                        <span class="material-icons">search</span>
-                        <input trpe="text" placeholder="Search"/>
-                    </div>
-                </div>
-            </div>
-            <!-- release history list-->
-            <div *ngIf="userRole === 'Product Owner'">
-                <app-release-history-table [data]="releaseHistory" [listPerPage]="listNumber" />
-            </div>
-            <!-- bug fixes list-->
-            <div *ngIf="userRole === 'Help24 Analyst'">
-                <app-bug-fixes-table [data]="bugFixes" />
-            </div>
-        </div>
-         <!-- Ask DocuBot section -->
-        <div>
-            <div class="flex flex-col justify-center items-center">
-                <div class="flex mt-[12px] mb-[-8px]">
-                    <span class="w-[110.2px] h-[74.14px] scale-[0.6] bg-[url('./app/resources/icons/docu-bot-icon.svg')]">
-                    </span>
-                </div>
-                <p class="text-sm mb-2 text-description-color">Didn’t find what you’re looking for?</p>
-                <div class="flex justify-center items-center mb-[0px]">
-                    <button
-                        class="bg-white flex justify-center items-center py-[16px] px-[24px] gap-[16px] border border-[#D5D7DA] rounded-[16px] w-fit h-fit p-2 border gradient-border-button"
-                        (click)="documentationAskDocuBot()">
-                        <p>Ask DocuBot</p>
-                        <div class="w-[23px] h-[23px] bg-[url('./app/resources/icons/blue-stars.svg')]"></div>
-                    </button>
-                </div>
-            </div>
-        </div>
+<div class="document-container">
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner">
+      <span class="material-icons loading-icon">hourglass_empty</span>
+      <p>Loading documents...</p>
     </div>
-</div>
-<!-- first doc section -->
-<div class="h-full w-full" [ngClass]="(documentationGeneratingPage)? '' : 'hidden'">
-    <div class="flex flex-col justify-center items-center mt-[8%]">
-        <div class="flex flex-col justify-center items-center text-[#666f8d]">
-            <div class="flex mt-[18px] mb-6">
-                <span class="w-[110.2px] h-[74.14px] bg-[url('./app/resources/icons/docu-bot-icon.svg')]">
-                </span>
-            </div>
-            <p class="text-[24px] font-medium">Meet DocuBot!</p>
-            <p class="text-[16px]">Your assistant for generating documentation.</p>
-            <div class="flex flex-col gap-[24px] justify-center items-center mt-6">
-                <!-- select product section -->
-                <div class="flex flex-col gap-[16px]">
-                    <div class="relative w-100">
-                        <p class="text-sm">Select Product</p>
-                        <!-- Products Dropdown Button -->
-                        <button
-                            (click)="toggleProductDropdown()"
-                            class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-base h-[100%]">
-                            {{ selectedProduct || 'Select a Product' }}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-500"
-                                viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                        <!-- Products Dropdown Menu -->
-                        <div
-                            *ngIf="isProductDropdownOpen"
-                            class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                            <ul>
-                                <li
-                                    *ngFor="let product of products"
-                                    (click)="selectProduct(product)"
-                                    class="text-dropdown-text-color cursor-pointer px-4 py-2 hover:bg-gray-100 text-base border-b border-gray-200 last:border-b-0">
-                                    {{ product }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- select template section -->
-                <div class="flex flex-col gap-[16px]">
-                    <div class="relative w-100">
-                        <p class="text-sm">Select Template</p>
-                        <!-- Templates Dropdown Button -->
-                        <button
-                            (click)="toggleDropdown()"
-                            class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-base h-[100%]">
-                            {{ selectedTemplate }}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-500"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                        <!-- Templates Dropdown Menu -->
-                        <div
-                            *ngIf="isOpen"
-                            class="text-dropdown-text-color absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                            <ul>
-                                <li
-                                    *ngFor="let template of templates"
-                                    (click)="selectTemplate(template)"
-                                    class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-base border-b border-gray-200 last:border-b-0">
-                                    {{ template }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- add sources section -->
-                <div class="flex flex-col justify-start gap-[8px]">
-                    <p class="text-sm mb-[-10px]">Add Sources</p>
-                    <!-- sources list -->
-                    <ul class="flex flex-col gap-[8px] w-100">
-                        <li class="flex w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[10px] px-[16px] gap-[8px] justify-between " *ngFor="let item of sources; let i = index">
-                            <div class="flex items-center justify-center gap-[4px]">
-                                <span class="w-[24px] h-[24px] scale-[0.8] bg-[url('./app/resources/icons/green-file-uplode-icon.svg')]"></span>
-                                <span class="text-base whitespace-nowrap overflow-hidden text-ellipsis w-[25ch] flex-1 text-[#2C2D2E]">{{item.newSource}}</span>
-                            </div>
-                            <button class="material-icons text-[#919399] ml-[0px]" (click)="deleteSource(i)">delete</button>
-                        </li>
-                    </ul>
-                    <div class="flex w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[10px] px-[16px] gap-[8px]">
-                        <span class="w-[13px] h-[20px] bg-[url('./app/resources/icons/paste-url-icon.svg')]">
-                        </span>
-                        <input type="text" 
-                            placeholder="Paste your URL here" 
-                            class="text-base"  
-                            [(ngModel)]="newSource" 
-                            (keydown.enter)="addSource()"
-                        />
-                    </div>
-                </div>
-                <!-- Drag and Drop or Browse -->
-                <div class="w-[100%] flex flex-col gap-2">
-                    <!-- pdf sources list -->
-                    <ul class="flex flex-col gap-[8px] w-[100%] mt-12">
-                        <li class="flex w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[10px] px-[16px] gap-[8px] justify-between " *ngFor="let item of PdfSources; let i = index">
-                            <div class="flex items-center justify-center gap-[4px]">
-                                <span class="w-[20px] h-[24px] scale-[0.8] bg-[url('./app/resources/icons/pdf-icon.svg')]"></span>
-                                <span class="text-base whitespace-nowrap overflow-hidden text-ellipsis w-[25ch] flex-1 text-[#2C2D2E]">{{item.PdfSources}}</span>
-                            </div>
-                            <button class="material-icons text-[#919399] ml-[0px]" (click)="deleteSource(i)">delete</button>
-                        </li>
-                    </ul>
-                    <div class="flex flex-col gap-[16px] w-[100%]">
-                        <div class="flex flex-col items-center justify-center w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[16px] px-[24px] gap-[4px]"
-                            (dragover)="onDragOver($event)" 
-                            (drop)="onDrop($event)">
-                            <span class="material-icons rotate-270 text-[#919399] my-[4px]">logout</span>
-                            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" multiple>
-                            <p class="text-[#474567] text-sm">Drag and drop or 
-                                <span class="text-primary cursor-pointer" (click)="fileInput.click()">Browse</span>
-                            </p>
-                            <p class="text-[#919399] text-xs">PDF, DOC or DOCX (max. 50 MB)</p>
-                        </div>
-                    </div>
-                </div>
-                <button class="text-sm text-white bg-primary flex items-center gap-[8px] px-[14px] rounded-lg border border-[#D5D7DA] h-[41.5px]" [ngClass]="(!generateDoc)? 'disabled' : ''" (click)="goToDocumentationGeneratedPage()">
-                    <span class="w-[18.33px] h-[18.33px] scale-[0.8] bg-[url('./app/resources/icons/white-stars.svg')]">
-                    </span>
-                    <span>Generate</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- second doc section -->
-<div class="h-full w-full flex flex-col lg:flex-row gap-4" [ngClass]="(documentationGeneratedPage)? 'block' : 'hidden'">
-    <!-- document generate section -->
-    <div class="flex flex-col gap-[16px] flex-1">
-        <div class="flex justify-between">
-            <!-- Select Product, Template and Add Sources dropdown section -->
-            <div class="flex flex-col lg:flex-row gap-[16px]">
-                <div class="flex flex-col relative">
-                    <div>
-                        <div class="flex flex-col lg:flex-row gap-[16px]">
-                            <!-- Select Product dropdown section -->
-                            <div class="relative w-45">
-                                <!-- Product Dropdown Button -->
-                                <button
-                                    type="button"
-                                    (click)="toggleProductDropdown()"
-                                    class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%] whitespace-nowrap overflow-hidden truncate w-[18ch]">
-                                    {{ selectedProduct || 'Select a Product'}}
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5 text-gray-500"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </button>
-                                <!-- Product Dropdown Menu -->
-                                <div
-                                    *ngIf="isProductDropdownOpen"
-                                    class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                                    <ul>
-                                        <li
-                                            *ngFor="let product of products"
-                                            (click)="selectProduct(product)"
-                                            class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0 whitespace-nowrap overflow-hidden text-ellipsis w-[18ch]"
-                                        >
-                                            {{ product }}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- Select Template dropdown section -->
-                            <div class="relative w-45">
-                                <!-- Template Dropdown Button -->
-                                <button
-                                    (click)="toggleDropdown()"
-                                    class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%]">
-                                    {{ selectedTemplate }}
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5 text-gray-500"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </button>
+  </div>
 
-                                <!-- Template Dropdown Menu -->
-                                <div
-                                    *ngIf="isOpen"
-                                    class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                                    <ul>
-                                        <li
-                                            *ngFor="let template of templates"
-                                            (click)="selectTemplate(template)"
-                                            class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0"
-                                        >
-                                            {{ template }}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                             <!-- Select Template dropdown section -->
-                             <div class="relative w-45">
-                                <!-- View Sources Dropdown Button -->
-                                <button
-                                    (click)="toggleViewSourcesDropdown()"
-                                    class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%]">
-                                    View Sources
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5 text-gray-500"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </button>
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <span class="material-icons error-icon">error</span>
+    <p>{{ errorMessage }}</p>
+    <button class="error-retry-btn" (click)="loadDocuments()">Retry</button>
+  </div>
 
-                                <!-- View Sources Dropdown Menu -->
-                                <div
-                                    *ngIf="isViewSourcesDropdownOpen"
-                                    class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                                    <ul >
-                                        <li 
-                                            *ngFor="let item of sources; let i = index"
-                                            class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0">
-                                            <label  class="flex gap-2 view-sources-container">
-                                                <input type="checkbox" checked="checked">
-                                                <span class="my-auto w-[28px] h-[16px] scale-[0.9] bg-[url('./app/resources/icons/green-jira-icon.svg')]">
-                                                </span>
-                                                <span
-                                                    class="whitespace-nowrap overflow-hidden text-ellipsis w-[20ch]">
-                                                    {{ item.newSource }}
-                                                </span>
-                                            </label>
-                                        </li>
-                                        <!-- Add Sources section -->
-                                        <div class="px-4 py-2 text-[#2388FF] text-sm font-medium">
-                                            <button class="flex gap-[8px]" (click)="openModal()">
-                                                <span class="w-[22px] h-[22px] bg-[url('./app/resources/icons/add-link-icon.svg')]">
-                                                </span>
-                                                Add a Sources
-                                            </button>
-                                        </div>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Generate button -->
-                <div class="flex flex-col relative">
-                    <div>
-                        <button class="text-sm text-white bg-primary flex items-center gap-[8px] px-[14px] rounded-lg border border-[#D5D7DA] h-[41.5px]" [ngClass]="(!generateDoc)? 'disabled' : ''" (click)="createDocument()">
-                            <span class="w-[18.33px] h-[18.33px] scale-[0.8] bg-[url('./app/resources/icons/white-stars.svg')]">
-                            </span>
-                            <span>Generate</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!-- export and publish button section -->
-            <div class="flex flex-col relative">
-                <div>
-                    <div class="flex flex-col lg:flex-row gap-[16px] h-[100%]">
-                        <button class="my-auto bg-white border border-[#D5D7DA] rounded-[8px] px-[16px] py-[8px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-[#666F8D] text-sm font-medium h-[100%]" (click)="exportAsText()">
-                            <span class="w-[21.83px] h-[21.83px] bg-[url('./app/resources/icons/download-icon.svg')]">
-                            </span>
-                            Export
-                        </button>
-                        <button class="my-auto border border-[#D5D7DA] rounded-[8px] px-[24px] py-[8px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-white text-sm font-medium bg-primary h-[100%]" [ngClass]="(displayDoc)? '' : 'disabled'">Publish</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- documentation section -->
-        <div class="bg-white flex flex-col gap-[16px] w-full h-auto rounded-lg px-6 py-8 overflow-y-auto bg-red-300">
-            <!--/* doc section */-->
-            <div class="flex flex-col gap-[12px] px-[4px]">
-                <p>
-                    Example: ACI Payment Gateway – Release Notes (Version 2.5.0) 
-                </p>
-                <p>
-                    Release Date: March 15, 2025 
-                </p>
-                <p class="text-[#666F8D]">
-                    Prepared By: Product Management Team 
-                </p>
-                <ul class="text-[#666F8D] flex flex-col gap-[12px]">
-                    <li class="flex flex-col gap-[8px]" *ngFor="let item of generatedDocument">
-                        <p>
-                            {{item.title}}
-                        </p>
-                        <p>
-                           {{item.description}}
-                        </p>
-                        <p>
-                           {{item.Issues}}
-                        </p>
-                        <ul class="list-disc flex flex-col gap-[12px] ml-[24px]">
-                            <li *ngFor="let issue of item.Issues">
-                                {{ issue }}
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <div class="text-[#666F8D]"> 
-                    <p>
-                        For further details, contact: 
-                    </p>
-                    <p>
-                    📧 ACI Support Team – support&#64;aci.com
-                    </p>
-                    <p>
-                    📖 Documentation & FAQs – ACI Knowledge Base
-                    </p>
-                </div>
-            </div>
-        </div>
+  <!-- Sidebar -->
+  <div class="document-sidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="header-content">
+        <h2 class="sidebar-title">Documentation</h2>
+        <p class="sidebar-subtitle">Manage and organize your documents</p>
+      </div>
+      <button class="new-document-btn" (click)="createNewDocument()">
+        <span class="material-icons">add</span>
+        New Document
+      </button>
     </div>
-    <!-- editor section -->
-    <div class="flex flex-col w-[20%] justify-center ">
-        <div class="flex-1 overflow-y-auto p-4 rounded-lg">
-            <div>
+
+    <!-- Search -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <span class="material-icons search-icon">search</span>
+        <input 
+          type="text" 
+          placeholder="Search documents..." 
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput($event)"
+          (keydown)="onKeyDown($event)"
+          class="search-input"
+        >
+        <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Folder Tree -->
+    <div class="folder-tree">
+      <div class="tree-header">
+        <span class="tree-title">All Documents</span>
+        <span class="document-count">{{ getTotalDocumentCount() }} documents</span>
+      </div>
+      
+      <div class="tree-content">
+        <div 
+          *ngFor="let folder of getFilteredFolders()" 
+          class="folder-item"
+          [class.folder-open]="folder.isOpen"
+        >
+          <!-- Folder/File Item -->
+          <div 
+            class="folder-row"
+            (click)="toggleFolder(folder)"
+            [class.selected]="selectedDocument?.id === folder.id"
+            [class.folder-selected]="folder.type === 'folder' && selectedDocument?.id === folder.id"
+          >
+            <div class="folder-icon-wrapper">
+              <span class="material-icons folder-icon" [class.folder-icon-open]="folder.isOpen">
+                {{ folder.icon }}
+              </span>
             </div>
+            <div class="folder-info">
+              <span class="folder-name">{{ folder.name }}</span>
+              <span *ngIf="folder.type === 'file'" class="file-meta">{{ getFileMeta(folder) }}</span>
+            </div>
+            <div class="folder-actions">
+              <span 
+                *ngIf="folder.type === 'folder'" 
+                class="material-icons expand-icon"
+                [class.expanded]="folder.isOpen"
+              >
+                expand_more
+              </span>
+              <span *ngIf="folder.type === 'file'" class="material-icons file-action-icon">more_vert</span>
+            </div>
+          </div>
+
+          <!-- Children -->
+          <div 
+            *ngIf="folder.children && folder.isOpen" 
+            class="folder-children"
+          >
+            <div 
+              *ngFor="let child of folder.children" 
+              class="folder-item child-item"
+              (click)="toggleFolder(child)"
+              [class.selected]="selectedDocument?.id === child.id"
+            >
+              <div class="folder-row">
+                <div class="folder-icon-wrapper">
+                  <span class="material-icons folder-icon">
+                    {{ child.icon }}
+                  </span>
+                </div>
+                <div class="folder-info">
+                  <span class="folder-name">{{ child.name }}</span>
+                  <span class="file-meta">{{ getFileMeta(child) }}</span>
+                </div>
+                <div class="folder-actions">
+                  <span class="material-icons file-action-icon">more_vert</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="flex items-center justify-center">
-            <button class="bg-white border border-[#D3D3D3] rounded-[36px] px-[18px] py-[12px] flex items-center gap-[12px] text-secondary">
-                <span class="w-[20px] h-[20px] bg-[url('./app/resources/icons/red-stars-icon.svg')]">
-                </span>
-                Ask DocuBot 
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="document-main">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <div class="breadcrumb-content">
+        <div class="breadcrumb-path">
+          <span *ngFor="let path of getBreadcrumbPathArray(); let last = last" 
+                class="breadcrumb-item"
+                [class.active]="last">
+            {{ path }}
+            <span *ngIf="!last" class="material-icons breadcrumb-separator">chevron_right</span>
+          </span>
+        </div>
+        <div class="breadcrumb-actions">
+          <button class="breadcrumb-btn" (click)="refreshDocuments()" [disabled]="isLoading">
+            <span class="material-icons" [class.rotating]="isLoading">refresh</span>
+          </button>
+          <button class="breadcrumb-btn" (click)="showDocumentInfo()" [disabled]="!selectedDocument">
+            <span class="material-icons">info</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Content -->
+    <div class="document-content" *ngIf="selectedDocument; else noDocument">
+      <!-- Document Header -->
+      <div class="document-header">
+        <div class="document-title-section">
+          <div class="document-title-wrapper">
+            <h1 class="document-title">{{ selectedDocument.title }}</h1>
+            <div class="document-status">
+              <span class="status-badge" [class]="selectedDocument.status">
+                {{ selectedDocument.status }}
+              </span>
+            </div>
+          </div>
+          <div class="document-meta">
+            <div class="meta-item">
+              <span class="material-icons meta-icon">person</span>
+              <span class="meta-text">{{ selectedDocument.author }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="material-icons meta-icon">schedule</span>
+              <span class="meta-text">Last modified: {{ selectedDocument.lastModified }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="material-icons meta-icon">folder</span>
+              <span class="meta-text">{{ selectedDocument.category }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="document-actions">
+          <button class="action-btn primary" (click)="editDocument()" [disabled]="!selectedDocument">
+            <span class="material-icons">edit</span>
+            Edit
+          </button>
+          <button class="action-btn" (click)="shareDocument()" [disabled]="!selectedDocument">
+            <span class="material-icons">share</span>
+            Share
+          </button>
+          <button class="action-btn" (click)="downloadDocument()" [disabled]="!selectedDocument">
+            <span class="material-icons">download</span>
+            Download
+          </button>
+          <button class="action-btn menu" (click)="showDocumentMenu()" [disabled]="!selectedDocument">
+            <span class="material-icons">more_vert</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Document Body -->
+      <div class="document-body">
+        <div class="document-content-wrapper">
+          <div class="document-text" [innerHTML]="selectedDocument.content"></div>
+          
+          <!-- Document Tags -->
+          <div *ngIf="selectedDocument.tags && selectedDocument.tags.length > 0" class="document-tags">
+            <h3 class="tags-title">Tags</h3>
+            <div class="tags-list">
+              <span *ngFor="let tag of selectedDocument.tags" class="tag">
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Document History -->
+          <div class="document-history">
+            <h3 class="history-title">Document History</h3>
+            <div class="history-list">
+              <div *ngFor="let version of selectedDocument.versions" class="history-item">
+                <div class="version-info">
+                  <span class="version-number">{{ version.number }}</span>
+                  <span class="version-date">{{ version.date }}</span>
+                </div>
+                <span class="version-author">{{ version.author }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Document Selected -->
+    <ng-template #noDocument>
+      <div class="no-document">
+        <div class="no-document-content">
+          <div class="no-document-icon-wrapper">
+            <span class="material-icons no-document-icon">description</span>
+          </div>
+          <h2 class="no-document-title">No document selected</h2>
+          <p class="no-document-text">
+            Select a document from the sidebar to view its content, or create a new document to get started.
+          </p>
+          <div class="no-document-actions">
+            <button class="no-document-btn primary" (click)="createNewDocument()">
+              <span class="material-icons">add</span>
+              Create New Document
             </button>
+            <button class="no-document-btn" (click)="importDocument()">
+              <span class="material-icons">upload</span>
+              Import Document
+            </button>
+          </div>
         </div>
-    </div>
-</div>
-<!-- add sources modal section -->
-<div class="" *ngIf="isModalOpen">
-    <div class="overlay"></div>
-    <div class="">
-        <div class="flex flex-col bg-white p-[24px] gap-[12px] w-[100%] md:w-[480px] min-h-[490px] rounded-[12px] absolute document-model tooltip justify-between">
-            <div class="flex flex-col gap-[8px]">
-                <div class="flex items-center justify-between mb-[16px]">
-                    <p class="font-medium font-[20px] text-[#2c2d2e]">Upload Sources</p>
-                    <button (click)="closeModal()" class="flex">
-                        <span class="w-[21.69px] h-[27.9px] bg-[url('./app/resources/icons/black-close-icon.svg')] rounded-lg"></span>
-                    </button>
-                   
-                </div>
-                <p class="text-base text-[#344054]">Add JIRA or confluence Pages</p>
-                <!-- sources list -->
-                <ul class="flex flex-col gap-[8px]">
-                    <li class="flex w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[10px] px-[16px] gap-[8px] justify-between " *ngFor="let item of sources; let i = index">
-                        <div class="flex items-center justify-center gap-[4px]">
-                            <span class="w-[24px] h-[24px] scale-[0.8] bg-[url('./app/resources/icons/green-file-uplode-icon.svg')]"></span>
-                            <span class="text-sm whitespace-nowrap overflow-hidden text-ellipsis w-[30ch] flex-1 text-[#2C2D2E]">{{item.newSource}}</span>
-                        </div>
-                        <button class="material-icons text-[#919399] ml-[0px]" (click)="deleteSource(i)">delete</button>
-                    </li>
-                </ul>
-                <div class="flex w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[10px] px-[16px] gap-[8px]">
-                    <span class="w-[13px] h-[20px] bg-[url('./app/resources/icons/paste-url-icon.svg')]">
-                    </span>
-                    <input 
-                        type="text" 
-                        placeholder="Paste your URL here" 
-                        class="text-sm"  
-                        [(ngModel)]="newSource" 
-                        (keydown.enter)="addSource()">
-                </div>
-            </div>
-        
-            <!-- Drag and Drop or Browse -->
-            <div class="flex flex-col gap-[16px] w-[100%] mt-12">
-                <!-- pdf sources list -->
-                <ul class="flex flex-col gap-[8px] w-[100%]">
-                    <li class="flex w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[10px] px-[16px] gap-[8px] justify-between " *ngFor="let item of PdfSources; let i = index">
-                        <div class="flex items-center justify-center gap-[4px]">
-                            <span class="w-[20px] h-[24px] scale-[0.8] bg-[url('./app/resources/icons/pdf-icon.svg')]"></span>
-                            <span class="text-base whitespace-nowrap overflow-hidden text-ellipsis w-[25ch] flex-1 text-[#2C2D2E]">{{item.PdfSources}}</span>
-                        </div>
-                        <button class="material-icons text-[#919399] ml-[0px]" (click)="deleteSource(i)">delete</button>
-                    </li>
-                </ul>
-                <div class="flex flex-col items-center justify-center w-[100%] bg-[#FAFAFA] border border-[#DFDFDF] rounded-lg py-[16px] px-[24px] gap-[4px]"
-                    (dragover)="onDragOver($event)" 
-                    (drop)="onDrop($event)">
-                    <span class="material-icons rotate-270 text-[#919399] my-[4px]">logout</span>
-                    <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" multiple>
-                    <p class="text-[#474567] text-sm">Drag and drop or 
-                        <span class="text-primary cursor-pointer" (click)="fileInput.click()">Browse</span>
-                    </p>
-                    <p class="text-[#919399] text-xs">PDF, DOC or DOCX (max. 50 MB)</p>
-                </div>
-                <div class="flex gap-[12px]  mt-[10px] w-[100%] text-base font-bold">
-                    <button class="bg-white flex justify-center items-center py-[8px] px-[24px]  border border-[#D5D7DA] rounded-[8px] w-[50%]" (click)="closeModal()">
-                        Close 
-                    </button>
-                    <button class="active-button flex justify-center items-center py-[8px] px-[32px]  border border-[#D5D7DA] rounded-[8px] w-[50%]" (click)="addSource()">
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+      </div>
+    </ng-template>
+  </div>
 </div>
 
+<!-- Create Document Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Create New Document</h3>
+      <button class="modal-close" (click)="closeCreateModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="submitCreateForm()">
+        <div class="form-group">
+          <label for="create-title">Document Title *</label>
+          <input 
+            type="text" 
+            id="create-title"
+            [(ngModel)]="createForm.title" 
+            name="title"
+            placeholder="Enter document title"
+            required
+            class="form-input"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="create-category">Category</label>
+          <select 
+            id="create-category"
+            [(ngModel)]="createForm.category" 
+            name="category"
+            class="form-select"
+          >
+            <option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="create-content">Content</label>
+          <textarea 
+            id="create-content"
+            [(ngModel)]="createForm.content" 
+            name="content"
+            placeholder="Enter document content (HTML supported)"
+            rows="8"
+            class="form-textarea"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="create-tags">Tags</label>
+          <input 
+            type="text" 
+            id="create-tags"
+            [(ngModel)]="createForm.tags" 
+            name="tags"
+            placeholder="Enter tags separated by commas"
+            class="form-input"
+          >
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeCreateModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Create Document</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Document Modal -->
+<div *ngIf="showEditModal" class="modal-overlay" (click)="closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Edit Document</h3>
+      <button class="modal-close" (click)="closeEditModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="submitEditForm()">
+        <div class="form-group">
+          <label for="edit-title">Document Title *</label>
+          <input 
+            type="text" 
+            id="edit-title"
+            [(ngModel)]="editForm.title" 
+            name="title"
+            placeholder="Enter document title"
+            required
+            class="form-input"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-category">Category</label>
+          <select 
+            id="edit-category"
+            [(ngModel)]="editForm.category" 
+            name="category"
+            class="form-select"
+          >
+            <option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-content">Content</label>
+          <textarea 
+            id="edit-content"
+            [(ngModel)]="editForm.content" 
+            name="content"
+            placeholder="Enter document content (HTML supported)"
+            rows="8"
+            class="form-textarea"
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-tags">Tags</label>
+          <input 
+            type="text" 
+            id="edit-tags"
+            [(ngModel)]="editForm.tags" 
+            name="tags"
+            placeholder="Enter tags separated by commas"
+            class="form-input"
+          >
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Update Document</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Share Document Modal -->
+<div *ngIf="showShareModal" class="modal-overlay" (click)="closeShareModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Share Document</h3>
+      <button class="modal-close" (click)="closeShareModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Share Link</label>
+        <div class="share-link-wrapper">
+          <input 
+            type="text" 
+            [value]="shareLink" 
+            readonly
+            class="form-input"
+          >
+          <button type="button" class="btn-secondary" (click)="copyShareLink()">
+            <span class="material-icons">content_copy</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Share via Email</label>
+        <div class="share-email-wrapper">
+          <input 
+            type="email" 
+            [(ngModel)]="shareEmail"
+            placeholder="Enter email address"
+            class="form-input"
+          >
+          <button type="button" class="btn-primary" (click)="sendShareEmail()">
+            Send
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Permissions</label>
+        <select [(ngModel)]="sharePermissions" class="form-select">
+          <option value="view">View Only</option>
+          <option value="edit">Can Edit</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="isPublic">
+          Make document public
+        </label>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeShareModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Info Modal -->
+<div *ngIf="showInfoModal" class="modal-overlay" (click)="closeInfoModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Document Information</h3>
+      <button class="modal-close" (click)="closeInfoModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="selectedDocument">
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Title</label>
+          <span>{{ selectedDocument.title }}</span>
+        </div>
+        <div class="info-item">
+          <label>Author</label>
+          <span>{{ selectedDocument.author }}</span>
+        </div>
+        <div class="info-item">
+          <label>Category</label>
+          <span>{{ selectedDocument.category }}</span>
+        </div>
+        <div class="info-item">
+          <label>Status</label>
+          <span class="status-badge" [class]="selectedDocument.status">
+            {{ selectedDocument.status }}
+          </span>
+        </div>
+        <div class="info-item">
+          <label>Last Modified</label>
+          <span>{{ selectedDocument.lastModified }}</span>
+        </div>
+        <div class="info-item" *ngIf="selectedDocument.tags && selectedDocument.tags.length > 0">
+          <label>Tags</label>
+          <div class="tags-display">
+            <span *ngFor="let tag of selectedDocument.tags" class="tag">{{ tag }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeInfoModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Menu Modal -->
+<div *ngIf="showMenuModal" class="modal-overlay" (click)="closeMenuModal()">
+  <div class="modal-content menu-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Document Options</h3>
+      <button class="modal-close" (click)="closeMenuModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="menu-options">
+        <button class="menu-option" (click)="updateDocumentStatus('draft'); closeMenuModal()">
+          <span class="material-icons">edit</span>
+          Mark as Draft
+        </button>
+        <button class="menu-option" (click)="updateDocumentStatus('published'); closeMenuModal()">
+          <span class="material-icons">publish</span>
+          Publish Document
+        </button>
+        <button class="menu-option" (click)="updateDocumentStatus('archived'); closeMenuModal()">
+          <span class="material-icons">archive</span>
+          Archive Document
+        </button>
+        <button class="menu-option" (click)="downloadDocument(); closeMenuModal()">
+          <span class="material-icons">download</span>
+          Download
+        </button>
+        <button class="menu-option" (click)="shareDocument(); closeMenuModal()">
+          <span class="material-icons">share</span>
+          Share
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Document Modal -->
+<div *ngIf="showImportModal" class="modal-overlay" (click)="closeImportModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Import Document</h3>
+      <button class="modal-close" (click)="closeImportModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="submitImportForm()">
+        <div class="form-group">
+          <label for="import-file">Select File</label>
+          <div class="file-upload-wrapper">
+            <input 
+              type="file" 
+              id="import-file"
+              (change)="onFileSelected($event)"
+              accept=".pdf,.doc,.docx,.txt,.md,.html"
+              class="file-input"
+            >
+            <div class="file-upload-display">
+              <span class="material-icons">upload_file</span>
+              <span *ngIf="importFile; else noFileSelected">
+                {{ importFile.name }}
+              </span>
+              <ng-template #noFileSelected>
+                Choose a file to import
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="import-category">Category</label>
+          <select 
+            id="import-category"
+            [(ngModel)]="importCategory" 
+            name="category"
+            class="form-select"
+          >
+            <option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeImportModal()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!importFile">
+            Import Document
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

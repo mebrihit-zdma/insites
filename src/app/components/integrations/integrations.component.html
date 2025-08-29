@@ -1,0 +1,315 @@
+<div class="integrations-container">
+
+  
+  <!-- Header -->
+  <div class="integrations-header">
+    <div class="header-content">
+      <h1 class="page-title">Integrations</h1>
+      <p class="page-description">
+        Connect your favorite tools and services to enhance your workflow
+      </p>
+    </div>
+  </div>
+
+  <!-- Integrations Grid -->
+  <div class="integrations-grid">
+    <div 
+      *ngFor="let integration of integrations" 
+      class="integration-card"
+      [class.connected]="integration.status === 'connected'"
+    >
+      <!-- Integration Icon -->
+      <div class="integration-icon" [style.background-color]="integration.iconBgColor">
+        <span class="material-icons">{{ integration.icon }}</span>
+      </div>
+
+      <!-- Integration Content -->
+      <div class="integration-content">
+        <h3 class="integration-name">{{ integration.name }}</h3>
+        <p class="integration-description">{{ integration.description }}</p>
+      </div>
+
+      <!-- Integration Status -->
+      <div class="integration-actions">
+        <button 
+          class="connect-btn"
+          [class]="getStatusClass(integration)"
+          (click)="openIntegrationModal(integration)"
+          [disabled]="integration.status === 'connecting'"
+        >
+          <span class="material-icons" *ngIf="integration.status === 'connected'">check</span>
+          <span class="material-icons" *ngIf="integration.status === 'connecting'">hourglass_empty</span>
+          {{ getStatusText(integration) }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Uploaded Files Section -->
+  <div class="uploaded-files-section" *ngIf="uploadedFiles.length > 0">
+    <div class="section-header">
+      <div class="header-content">
+        <h2 class="section-title">Uploaded Files</h2>
+        <p class="section-description">Files uploaded through integrations that are available for dashboard insights</p>
+      </div>
+              <div class="header-actions">
+          <div class="file-stats">
+            <span class="stat-item">
+              <span class="stat-number">{{ uploadedFiles.length }}</span>
+              <span class="stat-label">Total Files</span>
+            </span>
+            <span class="stat-item">
+              <span class="stat-number">{{ getProcessedCount() }}</span>
+              <span class="stat-label">Processed</span>
+            </span>
+            <span class="stat-item">
+              <span class="stat-number">{{ getProcessingCount() }}</span>
+              <span class="stat-label">Processing</span>
+            </span>
+          </div>
+          <div class="view-controls">
+            <button 
+              class="view-toggle-btn"
+              [class.active]="viewMode === 'grid'"
+              (click)="setViewMode('grid')"
+              title="Grid View">
+              <span class="material-icons">grid_view</span>
+            </button>
+            <button 
+              class="view-toggle-btn"
+              [class.active]="viewMode === 'list'"
+              (click)="setViewMode('list')"
+              title="List View">
+              <span class="material-icons">view_list</span>
+            </button>
+
+          </div>
+        </div>
+    </div>
+    
+    <!-- File Filters -->
+    <div class="file-filters">
+      <div class="filter-group search-group">
+        <label class="filter-label">Search:</label>
+        <div class="search-input-wrapper">
+          <span class="material-icons search-icon">search</span>
+          <input 
+            type="text" 
+            placeholder="Search files..." 
+            [(ngModel)]="searchQuery"
+            (input)="onSearchInput()"
+            class="search-input"
+          >
+          <button 
+            *ngIf="searchQuery" 
+            (click)="clearSearch()" 
+            class="clear-search-btn"
+            title="Clear search"
+          >
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+          <option value="">All Status</option>
+          <option value="processed">Processed</option>
+          <option value="processing">Processing</option>
+          <option value="error">Error</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Type:</label>
+        <select [(ngModel)]="typeFilter" (change)="applyFilters()" class="filter-select">
+          <option value="">All Types</option>
+          <option value="CSV">CSV</option>
+          <option value="PDF">PDF</option>
+          <option value="DOCX">DOCX</option>
+          <option value="XLSX">XLSX</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Sort by:</label>
+        <select [(ngModel)]="sortBy" (change)="applyFilters()" class="filter-select">
+          <option value="uploadDate">Upload Date</option>
+          <option value="name">Name</option>
+          <option value="size">Size</option>
+          <option value="type">Type</option>
+        </select>
+      </div>
+      <button class="clear-filters-btn" (click)="clearFilters()" *ngIf="hasActiveFilters()">
+        Clear Filters
+      </button>
+    </div>
+    
+    <div class="files-container" [class.list-view]="viewMode === 'list'">
+      <div 
+        *ngFor="let file of filteredFiles" 
+        class="file-card"
+        [class.processing]="file.status === 'processing'"
+        [class.error]="file.status === 'error'"
+      >
+        <!-- File Icon -->
+        <div class="file-icon">
+          <span class="material-icons">{{ getFileIcon(file.type) }}</span>
+        </div>
+
+        <!-- File Content -->
+        <div class="file-content">
+          <h4 class="file-name">{{ file.name }}</h4>
+          <div class="file-meta">
+            <span class="file-size">{{ file.size }}</span>
+            <span class="file-type">{{ file.type }}</span>
+            <span class="file-date">{{ file.uploadDate | date: 'MMM d, y' }}</span>
+          </div>
+                              <div class="file-status">
+                      <span class="status-badge" [class]="'status-' + file.status">
+                        {{ getFileStatusText(file.status) }}
+                      </span>
+                    </div>
+        </div>
+
+        <!-- File Actions -->
+        <div class="file-actions">
+          <button class="action-btn" (click)="viewFileDetails(file)" title="View Details">
+            <span class="material-icons">visibility</span>
+          </button>
+          <button class="action-btn" (click)="downloadFile(file)" title="Download">
+            <span class="material-icons">download</span>
+          </button>
+          <button class="action-btn delete" (click)="deleteFile(file.id)" title="Delete">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integration Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-icon" [style.background-color]="selectedIntegration?.iconBgColor">
+          <span class="material-icons">{{ selectedIntegration?.icon }}</span>
+        </div>
+        <div class="modal-title-section">
+          <h2 class="modal-title">{{ getModalStepTitle() }}</h2>
+          <p class="modal-description">{{ getModalStepDescription() }}</p>
+        </div>
+        <button class="modal-close" (click)="closeModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Step 1: Connect/Upload -->
+        <div *ngIf="modalStep === 1" class="modal-step">
+          <div class="step-content">
+            <!-- File Upload for Customer Files -->
+            <div *ngIf="selectedIntegration?.id === 'customer-files'" class="file-upload-section">
+              <div class="upload-area" (click)="fileInput.click()">
+                <span class="material-icons upload-icon">cloud_upload</span>
+                <h3>Upload Files</h3>
+                <p>Click to select files or drag and drop</p>
+                <p class="file-types">Supported: CSV, PDF, DOCX, XLSX (Max 50MB each)</p>
+              </div>
+              <input 
+                #fileInput
+                type="file" 
+                multiple 
+                (change)="onFileSelected($event)"
+                accept=".csv,.pdf,.docx,.xlsx"
+                style="display: none;"
+              />
+              
+              <!-- Selected Files -->
+              <div *ngIf="selectedFiles.length > 0" class="selected-files">
+                <h4>Selected Files:</h4>
+                <div class="file-list">
+                  <div *ngFor="let file of selectedFiles" class="selected-file">
+                    <span class="material-icons">description</span>
+                    <span class="file-name">{{ file.name }}</span>
+                    <span class="file-size">({{ formatFileSize(file.size) }})</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Regular Connect for other integrations -->
+            <div *ngIf="selectedIntegration?.id !== 'customer-files'" class="connect-section">
+              <p class="step-text">
+                Click the button below to start the integration process with {{ selectedIntegration?.name }}.
+              </p>
+            </div>
+            
+            <div class="step-actions">
+              <button class="btn-secondary" (click)="closeModal()">Cancel</button>
+              <button 
+                class="btn-primary" 
+                (click)="selectedIntegration?.id === 'customer-files' ? uploadFiles() : connectIntegration()"
+                [disabled]="selectedIntegration?.id === 'customer-files' && selectedFiles.length === 0"
+              >
+                <span class="material-icons">link</span>
+                {{ selectedIntegration?.id === 'customer-files' ? 'Upload Files' : 'Connect ' + selectedIntegration?.name }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Connecting/Processing -->
+        <div *ngIf="modalStep === 2" class="modal-step">
+          <div class="step-content">
+            <!-- Upload Progress for Customer Files -->
+            <div *ngIf="selectedIntegration?.id === 'customer-files'" class="upload-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+              </div>
+              <p class="progress-text">Uploading files... {{ uploadProgress }}%</p>
+            </div>
+            
+            <!-- Regular Loading for other integrations -->
+            <div *ngIf="selectedIntegration?.id !== 'customer-files'" class="loading-spinner">
+              <div class="spinner"></div>
+            </div>
+            <p class="step-text">
+              {{ selectedIntegration?.id === 'customer-files' ? 'Processing your files...' : 'Connecting to ' + selectedIntegration?.name + '...' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div *ngIf="modalStep === 3" class="modal-step">
+          <div class="step-content">
+            <div class="success-icon">
+              <span class="material-icons">check_circle</span>
+            </div>
+            <p class="step-text">
+              {{ selectedIntegration?.id === 'customer-files' ? 'Files have been successfully uploaded and processed!' : selectedIntegration?.name + ' has been successfully connected!' }}
+            </p>
+            
+            <!-- Show uploaded files info -->
+            <div *ngIf="selectedIntegration?.id === 'customer-files' && uploadedFiles.length > 0" class="uploaded-info">
+              <h4>Uploaded Files:</h4>
+              <div class="uploaded-files-list">
+                <div *ngFor="let file of uploadedFiles.slice(0, 3)" class="uploaded-file-item">
+                  <span class="material-icons">description</span>
+                  <span>{{ file.name }}</span>
+                                              <span class="status-badge" [class]="'status-' + file.status">
+                              {{ getFileStatusText(file.status) }}
+                            </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="step-actions">
+              <button class="btn-primary" (click)="closeModal()">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

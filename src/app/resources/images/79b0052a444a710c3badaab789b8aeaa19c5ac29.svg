@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Jira" clip-path="url(#clip0_8813_9602)">
+<path id="Vector" d="M23.6262 11.5919L13.0671 1.03285L12.0438 0.010251L0.462078 11.5919C0.0834741 11.9716 0.0834741 12.5862 0.462078 12.965L7.72387 20.2265L12.0438 24.5474L23.6262 12.965C24.0052 12.5862 24.0052 11.9716 23.6262 11.5919ZM12.0438 15.9057L8.41687 12.279L12.0438 8.65108L15.6714 12.279L12.0438 15.9057Z" fill="var(--fill-0, #2684FF)"/>
+<path id="Vector_2" d="M12.0443 8.65119C9.66975 6.27564 9.65762 2.42823 12.019 0.0387423L4.08047 7.97421L8.40138 12.2951L12.0443 8.65119Z" fill="var(--fill-0, #0052CC)"/>
+<path id="Vector_3" d="M15.6823 12.2689L12.0445 15.9059C13.1909 17.0513 13.8357 18.6058 13.8357 20.2268C13.8357 21.8477 13.1909 23.4014 12.0445 24.5478L20.0022 16.5899L15.6823 12.2689Z" fill="url(#paint0_linear_8813_9602)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_8813_9602" x1="13.6484" y1="18.624" x2="17.794" y2="14.4785" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0052CC"/>
+<stop offset="1" stop-color="#2684FF"/>
+</linearGradient>
+<clipPath id="clip0_8813_9602">
+<rect width="24" height="24.5581" fill="white"/>
+</clipPath>
+</defs>
+</svg>

@@ -2,7 +2,7 @@
     
         <div class="flex gap-[8px] justify-between"> 
             <p class="text-xs font-normal text-[#333740] self-center">{{ data.heading}} {{ title }}</p>
-                <button class="flex gap-[4px] items-end">
+                <button class="flex gap-[4px] items-end cursor-pointer hover:opacity-80 transition-opacity" (click)="openInsitesChat()">
                     <div class="w-[19px] h-[20px] bg-[url('./app/resources/icons/orange-stars.svg')]"></div>
                     <p class="text-xs font-medium  flex  text-[#FF6632]">Ask Insites</p>
                 </button> 

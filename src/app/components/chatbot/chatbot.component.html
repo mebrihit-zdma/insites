@@ -1,0 +1,93 @@
+<!-- Floating Chat Button -->
+<div class="chatbot-button-container">
+  <button 
+    class="chatbot-button"
+    (click)="openChatbot()"
+    type="button"
+    title="Ask Insites Assistant">
+  </button>
+</div>
+
+<!-- Chatbot Modal -->
+<div *ngIf="showChatbot" class="chatbot-modal-overlay">
+  <div class="chatbot-modal">
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-left">
+        <div class="chatbot-avatar">
+          <span class="material-icons">chat</span>
+        </div>
+        <div class="chatbot-info">
+          <h3 class="chatbot-title">Insites Assistant</h3>
+          <p class="chatbot-subtitle">Ask me anything about your data</p>
+        </div>
+      </div>
+      <button
+        (click)="closeChatbot()"
+        class="chatbot-close-btn"
+        type="button">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chatbot-messages">
+      <div *ngFor="let message of chatMessages" class="message-container">
+        <!-- User Message -->
+        <div *ngIf="message.isUser" class="user-message">
+          <div class="message-bubble user-bubble">
+            <p>{{message.text}}</p>
+          </div>
+        </div>
+
+        <!-- Bot Message -->
+        <div *ngIf="!message.isUser" class="bot-message">
+          <div class="message-bubble bot-bubble">
+            <p>{{message.text}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div *ngIf="isTyping" class="typing-indicator">
+        <div class="message-bubble bot-bubble">
+          <div class="typing-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Section -->
+    <div class="chatbot-input-section">
+      <div class="input-container">
+        <input
+          type="text"
+          [(ngModel)]="chatInput"
+          (keyup.enter)="sendChatMessage()"
+          placeholder="Ask about your dashboard data..."
+          class="chatbot-input">
+        <button
+          (click)="sendChatMessage()"
+          [disabled]="!chatInput.trim()"
+          class="send-button"
+          type="button">
+          <span class="material-icons">send</span>
+        </button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button
+          *ngFor="let action of quickActions"
+          (click)="sendQuickAction(action)"
+          class="quick-action-btn"
+          type="button">
+          {{action}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

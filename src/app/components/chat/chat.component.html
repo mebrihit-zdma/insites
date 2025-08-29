@@ -1,262 +1,516 @@
-<div class="h-[100%] flex flex-col justify-between">
-    <!-- dropdown section -->
-    <div class="flex flex-col gap-8 mb-[2%]">
-      <div class="flex justify-between mb-2 ml-[60px] md:ml-0">
-          <div class="flex relative">
-              <div class="flex gap-[16px]">
-                  <!-- Select Product dropdown section -->
-                  <div class="relative w-70">
-                      <!-- Product Dropdown Button -->
-                      <button
-                          type="button"
-                          (click)="toggleProductDropdown()"
-                          class="w-full text-left bg-white border border-[#D5D7DA] rounded-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] py-2 px-4 flex justify-between items-center text-dropdown-text-color text-sm font-medium h-[100%] whitespace-nowrap overflow-hidden truncate w-[18ch]">
-                          {{ selectedProduct || 'Select a Product' }}
-                          <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-5 w-5 text-gray-500"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              >
-                              <path
-                                  fill-rule="evenodd"
-                                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                  clip-rule="evenodd"
-                              />
-                          </svg>
-                      </button>
-                      <!-- Product Dropdown Menu -->
-                      <div
-                          *ngIf="isProductDropdownOpen"
-                          class="absolute w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                          <ul>
-                              <li
-                                 *ngFor="let product of products;let i = index"  
-                                    (click)="selectProduct(product,i)"
-                                  class="cursor-pointer px-4 py-2 hover:bg-gray-100 text-sm font-medium border-b border-gray-200 last:border-b-0"
-                              >
-                                  {{ product }}
-                              </li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <!-- bell icon -->
-          <span class="w-[22.76px] h-[29.25px] bg-[url('./app/resources/icons/blue-bell-icon.svg')]"></span>
+<div class="chat-container">
+  <!-- Header Section -->
+  <div class="chat-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="chat-title">AI Assistant</h1>
+        <p class="chat-subtitle">Powered by Insites AI</p>
       </div>
-      <div class=" flex-col gap-1 flex justify-center items-center ">
-        <h1>Welcome, {{userName}}!</h1>
-        <p class="text-subtitle-color" [ngClass]="(!createShortcutPrompt)? 'block' : 'hidden'">Here are a few prompts to help you kick things off!</p>
-      </div>
-    </div>
-    <!-- shortcut prompts -->
-    <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:px-[20%] mb-[20px]" [ngClass]="(!createShortcutPrompt)? 'block' : 'hidden'">
-      <!-- shortcut list -->
-      <li 
-        class="relative bg-white border border-[#D5D7DA] rounded-lg h-[100%] flex flex-col gap-[16px] px-[24px] py-[16px]"
-        *ngFor="let item of promptShortcuts">
-
-        <!-- Delete menu -->
-        <div 
-          class="absolute flex flex-col gap-[8px] bg-[#000] px-[16px] py-[8px] rounded-lg w-[160px] top-[-8px] right-[8px]"
-          [ngClass]="selectedPrompt === item ? '' : 'hidden'"
-          (click)="$event.stopPropagation()" #menuRef>
-
-          <button class="flex gap-[6px]">
-            <span class="mt-auto mb-auto w-[9.33px] h-[12px] bg-[url('./app/resources/icons/pin-icon.svg')]"></span>
-            <span class="my-auto text-[11px] text-[#fff]">Pin on Home Screen</span>
-          </button>
-          
-          <button class="flex gap-[6px]" (click)="deletePrompt(item); $event.stopPropagation()">
-            <span class="mt-auto mb-auto w-[9.33px] h-[12px] bg-[url('./app/resources/icons/delete-prompt-icon.svg')]"></span>
-            <span class="my-auto text-[11px] text-[#fff]">Delete Prompt</span>
-          </button>
+      
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <!-- Chat Status -->
+        <div class="chat-status">
+          <div class="status-indicator online"></div>
+          <span class="status-text">Online</span>
         </div>
-
-        <!-- Three-dot menu toggle -->
-        <div class="flex justify-between">
-          <p class="text-description-color font-medium text-[12px] my-auto">{{item.source}}</p>
-          <button 
-            class="cursor-pointer w-[12px] h-[3px] bg-[url('./app/resources/icons/shourtcut-icon.svg')]" 
-            (click)="openDeletePrompt(item); $event.stopPropagation()">
-          </button>
-        </div>
-
-        <!-- Prompt Text -->
-        <p class="text-description-color font-medium text-[15px] cursor-pointer" (click)="selectedShortcutPrompt(item.question)">{{item.question}}</p>
-      </li>
-
-      <!-- Create a shortcut Prompt -->
-      <div class="bg-white border border-[#D5D7DA] rounded-lg h-[100%] flex flex-col justify-between gap-[16px] px-[24px] py-[16px]">
-        <div class="flex">
-          <button class="w-[24px] h-[24px] bg-[url('./app/resources/icons/add-icon.svg')]" 
-            (click) = "addShortcutPrompt()"
-            [ngClass]="(!isAddShortcutPrompt)? '' : 'hidden'"
-          ></button>
-          <input 
-            #promptInput
-            type="text" 
-            [(ngModel)]="createdPrompt"
-            placeholder="|Enter your prompt" 
-            class="text-[#000] placeholder-[#D9D9D9] px-2 py-1 rounded"
-            [ngClass]="(isAddShortcutPrompt) ? '' : 'hidden'"
-            />
-
-        </div>
-        <div class="flex gap-[16px] justify-between">
-          <p class="text-description-color font-medium text-[15px] pb-[16px]" 
-          [ngClass]="(!isAddShortcutPrompt)? '' : 'hidden'">Create a Shortcut Prompt</p>
-          <button class="text-primary ml-auto" 
-          (click) = "saveShortcutPrompt()" 
-          [ngClass]="(isAddShortcutPrompt)? '' : 'hidden'">Save</button>
-        </div>
-      </div>
-    </ul>
-    <!-- question and answer -->
-    <div class="w-[100%] lg:w-[90%] ml-auto mr-auto mb-[50px]">
-        <div class="flex flex-col justify-center gap-[24px]">
-            <!-- Chat Response -->
-            <div class="w-[100%] lg:w-[90%] ml-auto mr-auto mb-[40px]">
-              <div class="flex flex-col justify-center gap-[24px]">
-                <div *ngFor="let msg of chatMessages">
-                  <div class="flex" [ngClass]="{ 'gap-2 justify-end': msg.sender === 'user'}">
-                    <!-- Response Icon-->
-                    <ng-container *ngIf="msg.sender === 'user'">
-                      <span class="flex mt-[8px] w-[14.5px] h-[14.5px]  bg-[url('./app/resources/icons/pencil-icon.svg')]"></span>
-                    </ng-container>
-                    <ng-container *ngIf="msg.sender === 'bot'">
-                      <span class="mt-[-4px] w-[36px] h-[36px] scale-[0.7] bg-[url('./app/resources/icons/white-book-icon.svg')]"></span>
-                    </ng-container>
-                    <div
-                      class="bg-white flex py-[10px] px-[14px] w-full lg:w-[60%] border border-[#D5D7DA] text-sm rounded-br-xl rounded-bl-xl rounded-tl-xl rounded-bl-xl"
-                      [ngClass]="{
-                        'rounded-tl-xl rounded-tr-none w-full lg:max-w-[70%] ': msg.sender === 'user',
-                        'rounded-tl-none rounded-tr-xl pl-[12px] pr-[20px] py-[20px]': msg.sender === 'bot'
-                      }">
-                      <!-- Response -->
-                      <div class="chat-answer">
-                        <ng-container *ngIf="!msg.loading; else loadingTemplate">
-                          <div [ngClass]="{'mb-4': msg.sender === 'bot'}" [innerHTML]="msg.text"></div>
-                          <ng-container *ngIf="msg.follow_up?.length">
-                            <strong>Follow Up Questions</strong>
-                            <ul class="mt-[8px] follow-up">
-                              <li *ngFor="let question of msg.follow_up">
-                                <p (click)="handleFollowUp(question)" class="cursor-pointer hover:underline text-primary">{{ question }}</p>
-                              </li>
-                            </ul>
-                          </ng-container>
-                        </ng-container>
-                        <ng-template #loadingTemplate>
-                          <div class="flex animate-pulse text-gray-600 gap-1">
-                            <div class="typing-loader">
-                              <span></span><span></span><span></span>
-                            </div>
-                          </div>
-                        </ng-template>
-                      </div>
-                    </div>
-                  </div>
-                  <div *ngIf="msg.sender === 'user'" class="flex justify-end text-description-color text-sm">{{ currentDate | date: 'd/MM/yyyy, h:mm a' }}</div>
-                  <ng-container *ngIf="msg.sender === 'bot' && msg.sources && !msg.loading">
-                    <div class="ml-[40px]">
-                      <p class="mt-[20px] mb-[-8px] text-caption-color">Sources</p>
-                      <div class="mt-4 lg:flex gap-4 lg:flex-wrap">
-                        <app-source-card
-                          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                          [data]="msg.sources" />
-                      </div>
-                    </div>
-                  </ng-container>
-                  <div *ngIf="msg.sender === 'bot'" class="flex text-description-color ml-[40px] mt-2 text-sm">{{ currentDate | date: 'd/MM/yyyy, h:mm a' }}</div>
-                </div>
-              </div>
-            </div>
-            <!-- Prompts Library list -->
-            <div class="relative">
-              <div class="absolute bottom-0 z-50 bg-white p-[12px] border border-[#D5D7DA] rounded-[8px] gap-[16px w-[50%] flex flex-col gap-4 py-4 px-6 text-primary-text-color"
-              [ngClass]="isPromptsLibraryModelOpen? 'block' : ' hidden'">
-                <div class="flex justify-between">
-                    <p class="border-b-1  ">Prompts Library</p>
-                    <button type="button" class="text-gray-900 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crypto-modal" (click)="closePromptsLibraryModel()" >
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
-                </div>
         
-                <div class="md:my-auto bg-white border border-[#D5D7DA] rounded-[8px] px-[12px] py-[10px] flex items-center gap-[8px] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] text-search-text-color text-sm font-medium w-[100%] justify-between">
-                    <input 
-                      type="text" 
-                      placeholder="Search"
-                      [(ngModel)]="promptsLibrarySearch "/>
-                    <span class="flex justify-center items-center w-[12.4px] h-[12.4px] bg-[url('./app/resources/icons/search-icon.svg')]"></span>
-                </div>
-                
-                <div class="flex">
-                  <input 
-                    type="text" 
-                    [(ngModel)]="createdLibraryPrompt"
-                    (keydown.enter)="addPromptToLibrary()"
-                    placeholder="+ Create a Prompt" 
-                    class="text-[#000] placeholder-[#919399] px-2 py-1 rounded w-[90%] break-words whitespace-normal"
-                    />
-                </div>
-                
-                <ul class="flex flex-col gap-4 text-primary-text-color w-[100%] h-[200px] overflow-y-auto pe-6">
-                  <li *ngFor="let item of filteredPrompts" class="flex justify-between cursor-pointer"
-                  (click)="selectedPromptLibrary(item.prompt)">
-                    <p 
-                      class="w-[90%]" 
-                      [innerHTML]="getHighlightedText(item.prompt, promptsLibrarySearch)">
-                    </p>
-                    <div class="flex gap-4">
-                      <button class="mt-auto mb-auto scale-[1.2] w-[9.33px] h-[12px] bg-[url('./app/resources/icons/delete-prompt-icon.svg')]"
-                      (click)="deleteLibraryPrompt(item); $event.stopPropagation()">
-                      </button>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <!-- Ask question input field -->
-            <div class="w-[100%] flex gap-2">
-              <!-- Prompts Library button -->
-              <button class="bg-white  items-center justify-between p-[12px]  border border-[#D5D7DA] rounded-[8px] gap-[16px] relative group" (click)="openPromptsLibraryModel()">
-                <div class="w-[20px] h-[20px] bg-[url('./app/resources/icons/prompts-library-icon.svg')]"></div>
-                <div class="absolute top-[-32px] z-50 bg-white border border-[#D5D7DA] rounded-lg text-primary-text-color
-                text-xs whitespace-pre-wrap p-2 shadow-lg transition-all
-                scale-0 group-hover:scale-100">Prompts Library</div>
-              </button>
-              <!-- question input field -->
-              <label class="w-[100%] bg-white flex items-center justify-between py-[12px] px-[12px]  border border-[#D5D7DA] rounded-[8px] gap-[16px]">
-                <div class="flex gap-[8px] w-[90%]">
-                    <span class="w-[16px] h-[17px] scale-[0.9] bg-[url('./app/resources/icons/chat-link-icon.svg')]"></span>
-                    <input 
-                      type="text" 
-                      placeholder="Ask your question!" 
-                      class="text-sm w-[100%] placeholder:text-[#737780]"
-                      name="askedQuestion"
-                      [(ngModel)]="askedQuestion"
-                      (keydown.enter)="askQuestion(askedQuestion)"
-                    />
-                </div>
-                <span class="w-[18px] h-[18.86px] bg-[url('./app/resources/icons/blue-right-arrow-icon.svg')]" (click)="askQuestion(askedQuestion)"></span>
-              </label>
-            </div>
-        </div>
-    </div>
-    <!-- deleted session alert -->
-    <div *ngIf="showAlert" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50 transition-opacity duration-300">
-      <div class="bg-white border border-gray-300 rounded-lg shadow-lg p-6 w-[300px] text-center">
-        <p class="text-gray-800">{{ alertMessage }}</p>
-        <button
-          class="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary"
-          (click)="showAlert = false"
-        >
-          Ok
+        <!-- Export Button -->
+        <button class="header-btn" (click)="openExportModal()" title="Export Chat">
+          <span class="material-icons">download</span>
+        </button>
+        
+        <!-- Share Button -->
+        <button class="header-btn" (click)="openShareModal()" title="Share Chat">
+          <span class="material-icons">share</span>
+        </button>
+        
+        <!-- Settings Button -->
+        <button class="header-btn" (click)="openSettings()" title="Settings">
+          <span class="material-icons">settings</span>
+        </button>
+        
+        <!-- Clear Chat Button -->
+        <button class="header-btn" (click)="clearChat()" title="Clear Chat">
+          <span class="material-icons">clear_all</span>
         </button>
       </div>
     </div>
+  </div>
+
+
+
+  <!-- Chat Messages Section -->
+  <div class="chat-messages-section" #messagesContainer>
+    <div class="messages-container">
+      <div 
+        *ngFor="let msg of chatMessages; let i = index"
+        class="message-wrapper"
+        [class.user-message]="msg.sender === 'user'"
+        [class.bot-message]="msg.sender === 'bot'">
+        
+        <!-- Message Content -->
+        <div class="message-content">
+          <!-- User Message -->
+          <div *ngIf="msg.sender === 'user'" class="user-message-content">
+            <div class="message-bubble user-bubble">
+              <div class="message-text">{{ msg.text }}</div>
+              
+              <!-- File Attachment -->
+              <div *ngIf="msg.attachment" class="attachment">
+                <div class="attachment-content">
+                  <span class="material-icons attachment-icon">attach_file</span>
+                  <span class="attachment-name">{{ msg.attachment.name }}</span>
+                  <span class="attachment-size">{{ msg.attachment.size }}</span>
+                </div>
+              </div>
+              
+              <!-- Message Actions -->
+              <div class="message-actions">
+                <button class="action-btn" (click)="copyMessage(msg.text)" title="Copy">
+                  <span class="material-icons">content_copy</span>
+                </button>
+                <button class="action-btn" (click)="editMessage(i)" title="Edit">
+                  <span class="material-icons">edit</span>
+                </button>
+              </div>
+            </div>
+            <div class="message-avatar user-avatar">
+              <span class="material-icons">person</span>
+            </div>
+          </div>
+
+          <!-- Bot Message -->
+          <div *ngIf="msg.sender === 'bot'" class="bot-message-content">
+            <div class="message-avatar bot-avatar">
+              <span class="material-icons">smart_toy</span>
+            </div>
+            <div class="message-bubble bot-bubble">
+              <!-- Loading State -->
+              <div *ngIf="msg.loading" class="loading-message">
+                <div class="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <p>AI is thinking...</p>
+              </div>
+              
+              <!-- Message Text -->
+              <div *ngIf="!msg.loading" class="message-text" [innerHTML]="msg.text"></div>
+              
+              <!-- Code Block -->
+              <div *ngIf="msg.code && !msg.loading" class="code-block-wrapper">
+                <div class="code-header">
+                  <span class="code-language">{{ msg.code.language }}</span>
+                  <button class="copy-code-btn" (click)="copyCode(msg.code.content)" title="Copy Code">
+                    <span class="material-icons">content_copy</span>
+                  </button>
+                </div>
+                <pre class="code-block"><code>{{ msg.code.content }}</code></pre>
+              </div>
+              
+              <!-- Follow-up Questions -->
+              <div *ngIf="msg.follow_up && msg.follow_up.length > 0 && !msg.loading" class="follow-up-questions">
+                <h4>Follow-up Questions:</h4>
+                <div class="follow-up-list">
+                  <button 
+                    *ngFor="let question of msg.follow_up" 
+                    class="follow-up-btn"
+                    (click)="handleFollowUp(question)">
+                    {{ question }}
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Sources -->
+              <div *ngIf="msg.sources && msg.sources.length > 0 && !msg.loading" class="sources-section">
+                <h4>Sources:</h4>
+                <div class="sources-list">
+                  <div *ngFor="let source of msg.sources" class="source-item">
+                    <span class="material-icons source-icon">link</span>
+                    <a [href]="source.url" target="_blank" class="source-link">{{ source.label }}</a>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Message Actions -->
+              <div *ngIf="!msg.loading" class="message-actions">
+                <button class="action-btn" (click)="copyMessage(msg.text)" title="Copy">
+                  <span class="material-icons">content_copy</span>
+                </button>
+                <button class="action-btn" (click)="likeMessage(i)" [class.liked]="msg.liked" title="Like">
+                  <span class="material-icons">{{ msg.liked ? 'thumb_up' : 'thumb_up_outlined' }}</span>
+                </button>
+                <button class="action-btn" (click)="dislikeMessage(i)" [class.disliked]="msg.disliked" title="Dislike">
+                  <span class="material-icons">{{ msg.disliked ? 'thumb_down' : 'thumb_down_outlined' }}</span>
+                </button>
+                <button class="action-btn" (click)="regenerateResponse(i)" title="Regenerate">
+                  <span class="material-icons">refresh</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Message Timestamp -->
+        <div class="message-timestamp" *ngIf="msg.timestamp">
+          {{ msg.timestamp | date: 'shortTime' }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shortcut Prompts Section -->
+  <div class="shortcuts-section" *ngIf="chatMessages.length === 0">
+    <div class="shortcuts-header">
+      <h3>Quick Start Prompts</h3>
+      <button class="add-prompt-btn" (click)="addShortcutPrompt()">
+        <span class="material-icons">add</span>
+        Add Prompt
+      </button>
+    </div>
+    
+    <div class="shortcuts-grid">
+      <div 
+        *ngFor="let prompt of promptShortcuts" 
+        class="shortcut-card"
+        (click)="askQuestion(prompt.question)">
+        <div class="shortcut-content">
+          <h4 class="shortcut-title">{{ prompt.question }}</h4>
+          <p class="shortcut-source">{{ prompt.source }}</p>
+        </div>
+        <div class="shortcut-actions">
+          <button class="shortcut-action-btn" (click)="$event.stopPropagation(); showDeletePrompt(prompt)">
+            <span class="material-icons">more_vert</span>
+          </button>
+        </div>
+        
+        <!-- Delete Prompt Dropdown -->
+        <div *ngIf="selectedPrompt === prompt" class="delete-prompt-dropdown">
+          <button class="delete-btn" (click)="deletePrompt(prompt)">
+            <span class="material-icons">delete</span>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prompts Library Modal -->
+  <div *ngIf="createShortcutPrompt" class="modal-overlay" (click)="closePromptsLibraryModel()">
+    <div class="prompts-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Prompts Library</h3>
+        <button class="modal-close" (click)="closePromptsLibraryModel()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Search -->
+        <div class="search-section">
+          <div class="search-input-wrapper">
+            <span class="material-icons search-icon">search</span>
+            <input 
+              type="text" 
+              [(ngModel)]="promptsLibrarySearch"
+              placeholder="Search prompts..." 
+              class="search-input"
+            />
+          </div>
+        </div>
+
+        <!-- Create New Prompt -->
+        <div class="create-prompt-section">
+          <div class="create-prompt-wrapper">
+            <input 
+              type="text" 
+              [(ngModel)]="createdLibraryPrompt"
+              (keydown.enter)="addPromptToLibrary()"
+              placeholder="+ Create a new prompt" 
+              class="create-prompt-input"
+            />
+            <button 
+              class="add-prompt-btn-small"
+              (click)="addPromptToLibrary()"
+              [disabled]="!createdLibraryPrompt.trim()">
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Prompts List -->
+        <div class="prompts-list">
+          <div 
+            *ngFor="let item of getFilteredPrompts()"
+            class="prompt-item"
+            (click)="askQuestion(item.prompt)">
+            <div class="prompt-text" [innerHTML]="getHighlightedText(item.prompt, promptsLibrarySearch)"></div>
+            <button 
+              class="delete-prompt-btn"
+              (click)="deleteLibraryPrompt(item); $event.stopPropagation()">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div *ngIf="showSettingsModal" class="modal-overlay" (click)="closeSettings()">
+    <div class="settings-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Chat Settings</h3>
+        <button class="modal-close" (click)="closeSettings()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="setting-group">
+          <label class="setting-label">Chat Theme</label>
+          <select class="setting-select" [(ngModel)]="chatTheme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="auto">Auto</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">AI Personality</label>
+          <select class="setting-select" [(ngModel)]="aiPersonality">
+            <option value="professional">Professional</option>
+            <option value="casual">Casual</option>
+            <option value="technical">Technical</option>
+            <option value="creative">Creative</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Message Sound</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="messageSound" id="sound-toggle">
+            <label for="sound-toggle"></label>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Auto-scroll to new messages</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="autoScroll" id="scroll-toggle">
+            <label for="scroll-toggle"></label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Auto-save chat history</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="autoSave" id="save-toggle">
+            <label for="save-toggle"></label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Code highlighting</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="showCodeHighlighting" id="code-toggle">
+            <label for="code-toggle"></label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Math rendering</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="showMathRendering" id="math-toggle">
+            <label for="math-toggle"></label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">Data visualization</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="showDataVisualization" id="viz-toggle">
+            <label for="viz-toggle"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  <div *ngIf="showExportModal" class="modal-overlay" (click)="closeExportModal()">
+    <div class="export-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Export Chat</h3>
+        <button class="modal-close" (click)="closeExportModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="export-options">
+          <div class="export-option" *ngFor="let format of exportFormats">
+            <input type="radio" [id]="format" name="exportFormat" [value]="format" [(ngModel)]="selectedExportFormat">
+            <label [for]="format">{{ format }}</label>
+          </div>
+        </div>
+        
+        <div class="export-actions">
+          <button class="btn-secondary" (click)="closeExportModal()">Cancel</button>
+          <button class="btn-primary" (click)="exportChat(selectedExportFormat)">Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div *ngIf="showShareModal" class="modal-overlay" (click)="closeShareModal()">
+    <div class="share-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Share Chat</h3>
+        <button class="modal-close" (click)="closeShareModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="share-link-section">
+          <label class="setting-label">Share Link</label>
+          <div class="link-input-wrapper">
+            <input type="text" [value]="shareLink" readonly class="link-input">
+            <button class="copy-link-btn" (click)="copyMessage(shareLink)">
+              <span class="material-icons">content_copy</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label class="setting-label">Public Access</label>
+          <div class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="isPublic" id="public-toggle">
+            <label for="public-toggle"></label>
+          </div>
+        </div>
+        
+        <div class="collaborators-section">
+          <label class="setting-label">Add Collaborators</label>
+          <div class="collaborator-input">
+            <input type="email" placeholder="Enter email address" #collaboratorEmail>
+            <button class="add-collaborator-btn" (click)="addCollaborator(collaboratorEmail.value); collaboratorEmail.value = ''">
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+          
+          <div class="collaborators-list" *ngIf="collaborators.length > 0">
+            <div *ngFor="let email of collaborators" class="collaborator-item">
+              <span>{{ email }}</span>
+              <button class="remove-collaborator-btn" (click)="removeCollaborator(email)">
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Input Section -->
+  <div class="chat-input-section">
+    <div class="input-container">
+
+      
+      <!-- Hidden File Input -->
+      <input 
+        #fileInput
+        type="file" 
+        (change)="onFileSelected($event)"
+        accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.png,.jpg,.jpeg"
+        multiple
+        style="display: none;"
+      />
+      
+      <!-- Selected Files -->
+      <div *ngIf="selectedFiles.length > 0" class="selected-files">
+        <div *ngFor="let file of selectedFiles" class="selected-file">
+          <span class="material-icons">description</span>
+          <span class="file-name">{{ file.name }}</span>
+          <span class="file-size">({{ formatFileSize(file.size) }})</span>
+          <button class="remove-file-btn" (click)="removeFile(file)">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input-wrapper">
+        <textarea 
+          #messageInput
+          placeholder="Type your message..." 
+          [(ngModel)]="askedQuestion"
+          (keydown)="onEnterPress($event)"
+          (input)="onInputChange()"
+          class="message-input"
+          rows="1"
+        ></textarea>
+        
+        <!-- Action Icons Row -->
+        <div class="action-icons-row">
+          <!-- Prompt Library Button -->
+          <button class="action-icon-btn" (click)="openPromptsLibraryModel()" title="Prompt Library">
+            <span class="material-icons">library_books</span>
+          </button>
+          
+          <!-- File Upload Button -->
+          <button class="action-icon-btn" (click)="fileInput.click()" title="Attach File">
+            <span class="material-icons">attach_file</span>
+          </button>
+          
+          <!-- Voice Input Button -->
+          <button 
+            class="action-icon-btn" 
+            [class.recording]="isRecording"
+            (click)="startVoiceInput()" 
+            title="Voice Input">
+            <span class="material-icons">{{ isRecording ? 'stop' : 'mic' }}</span>
+          </button>
+        </div>
+        
+        <!-- Send Button -->
+        <button 
+          class="send-btn"
+          (click)="askQuestion(askedQuestion)"
+          [disabled]="!askedQuestion.trim() || isGenerating"
+          [title]="!askedQuestion.trim() ? 'Type a message to send' : 'Send message'">
+          <span class="material-icons">{{ isGenerating ? 'schedule' : 'send' }}</span>
+        </button>
+      </div>
+      
+      <!-- Typing Indicator -->
+      <div *ngIf="isTyping" class="typing-status">
+        <span class="typing-text">You are typing...</span>
+      </div>
+      
+      <!-- AI Thinking Indicator -->
+      <div *ngIf="aiThinking" class="ai-thinking">
+        <div class="thinking-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="thinking-text">AI is thinking...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Modal -->
+  <div *ngIf="showAlert" class="alert-overlay">
+    <div class="alert-modal">
+      <p class="alert-message">{{ alertMessage }}</p>
+      <button class="alert-btn" (click)="showAlert = false">
+        OK
+      </button>
+    </div>
+  </div>
 </div>

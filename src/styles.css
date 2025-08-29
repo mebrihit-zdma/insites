@@ -25,6 +25,7 @@
   --color-primary-text-color: #2C2D2E;
   --color-secondary-text-color: #919399;
   --color-tertiary-text-color: #333740;
+  --color-neutral-700: #374151;
 
   --color-caption-color: #333740;
   --color-dropdown-text-color: #333740;
@@ -58,6 +59,63 @@ html, body{
     background-position: center; 
     background-attachment: fixed;
     font-family: var(--font-Inter);
+}
+
+/* Global gradient background style */
+.gradient-background {
+    opacity: 0.1;
+    background: linear-gradient(242deg, #E7FFC9 0%, #00A748 25%, #E7FFC9 50%, #E7FFC9 100%);
+}
+
+/* Apply gradient to main content areas */
+.main-content-area {
+    position: relative;
+}
+
+.main-content-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background: linear-gradient(242deg, #E7FFC9 0%, #00A748 25%, #E7FFC9 50%, #E7FFC9 100%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Background color classes for different sections */
+.bg-primary-green {
+    background-color: #E7FFC9;
+}
+
+.bg-secondary-green {
+    background-color: #00A748;
+}
+
+.bg-light-green {
+    background-color: #E7FFC9;
+}
+
+/* Card backgrounds with the specified colors */
+.card-bg-primary {
+    background: linear-gradient(135deg, #E7FFC9 0%, #00A748 100%);
+}
+
+.card-bg-secondary {
+    background: linear-gradient(135deg, #00A748 0%, #E7FFC9 100%);
+}
+
+/* Hover effects with the color scheme */
+.hover-green:hover {
+    background-color: #E7FFC9;
+    transition: background-color 0.3s ease;
+}
+
+.hover-dark-green:hover {
+    background-color: #00A748;
+    transition: background-color 0.3s ease;
 }
 *{
     outline: none;

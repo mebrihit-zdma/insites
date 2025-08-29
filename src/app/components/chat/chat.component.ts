@@ -6,413 +6,540 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { SourceCardComponent } from '../../components/cards/source-card/source-card.component';
+import { SearchChatService } from '../../services/search-chat.service';
+import { LoginService } from '../../services/login.service';
+
 import { AnswerSource, ChatMessage, ResponseMessage, ResponseSource, ChatHistory, followUpQuestions } from '../../models/chat.model';
 import { extractAnswerText, extractfollowUpQuestions, convertMarkdown, extractSources, extractResponseSources } from '../../utils/chat-utils';
 import { UserService } from '../../services/user.service';
 import { StreamService } from '../../services/stream.service';
 
-
-
-
 @Component({
   selector: 'app-chat',
   standalone:true,
-  imports: [CommonModule, FormsModule, SourceCardComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
 export class ChatComponent {
 
-  currentDate: Date = new Date(); // gets current date/time
+  currentDate: Date = new Date();
   app_id = "67daf330d62c5ade928150d1";
   model_name ="azure/gpt-4o";
   top_k = 3;
 
   userName: string | null = 'User Name';
-
   userId: any = "8c8cda2b-cda6-41c2-927d-511d40724810-test-chat-v2";
   sessionId: any = "";
+  profileImageUrl: string | null = null;
+  searchValue: string = '';
+  loginDisplay: boolean = false;
 
   askedQuestion: string = '';
   sources: AnswerSource[] = [];
   messages: ChatMessage[] = [];
-
   chatMessages: ResponseMessage[] = [];
 
+  // Enhanced Chat Features
+  showSettingsModal = false;
+  showFileUploadModal = false;
+  showVoiceModal = false;
+  showExportModal = false;
+  showShareModal = false;
+  
+  // Chat Settings
+  chatTheme = 'light';
+  messageSound = true;
+  autoScroll = true;
+  autoSave = true;
+  typingSpeed = 'normal';
+  aiPersonality = 'professional';
+  
+  // Voice Features
+  isRecording = false;
+  isListening = false;
+  voiceRecognition: any;
+  audioContext: any;
+  mediaRecorder: any;
+  audioChunks: any[] = [];
+  
+  // File Handling
+  selectedFiles: File[] = [];
+  supportedFileTypes = ['.pdf', '.doc', '.docx', '.txt', '.csv', '.xlsx', '.png', '.jpg', '.jpeg'];
+  maxFileSize = 10 * 1024 * 1024; // 10MB
+  
+  // AI Features
+  isTyping = false;
+  isGenerating = false;
+  aiThinking = false;
+  showSuggestions = true;
+  autoComplete = true;
+  
+  // Chat History & Export
+  chatHistory: any[] = [];
+  exportFormats = ['PDF', 'DOCX', 'TXT', 'JSON'];
+  selectedExportFormat = 'PDF';
+  
+  // Sharing & Collaboration
+  shareLink = '';
+  isPublic = false;
+  collaborators: string[] = [];
+  
+  // Advanced Features
+  showCodeHighlighting = true;
+  showMathRendering = true;
+  showImageGeneration = false;
+  showDataVisualization = true;
+  
+  // Chat features
   createShortcutPrompt = false;
-  products: string[] = [];
-  selectedProduct: string = '';
   isAddShortcutPrompt = false;
   createdPrompt: string = "";
-  isDeletePrompt =false;
+  isDeletePrompt = false;
   selectedPrompt: any = null;
-  createdLibraryPrompt:string = "";
-  promptsLibrarySearch:string = "";
+  createdLibraryPrompt: string = "";
+  promptsLibrarySearch: string = "";
   
   showAlert = false;
   alertMessage = '';
+  alertType = 'success';
+
+  // Prompts
+  promptShortcuts: any[] = [
+    { source: "Dashboard Insights", question: "What are the key insights from the latest customer data?" },
+    { source: "Performance Analysis", question: "How can I improve customer satisfaction scores?" },
+    { source: "Market Trends", question: "What trends are emerging in our market analysis?" },
+    { source: "Quarterly Review", question: "Can you analyze the performance metrics for this quarter?" },
+    { source: "Healthcare Analytics", question: "Show me the ischemic stroke mortality trends by state" },
+    { source: "Customer Needs", question: "What are the predicted customer needs for next quarter?" },
+    { source: "Industry Performance", question: "Compare our performance against industry benchmarks" },
+    { source: "Data Integration", question: "What insights can we get from the uploaded customer files?" },
+    { source: "AI Analysis", question: "Generate a comprehensive report on our business performance" },
+    { source: "Predictive Analytics", question: "What are the future trends we should prepare for?" }
+  ];
+
+  promptsLibrarylist = [
+    { prompt: "Generate an API customization guide for ACI Payment Hub" },
+    { prompt: "What are the differences between the latest and older release notes?" },
+    { prompt: "Explain updates from the latest Release Notes" },
+    { prompt: "Generate a guide on configuring custom dashboards and reports for Connetic High value Payments" },
+    { prompt: "Analyze customer satisfaction trends from the last quarter" },
+    { prompt: "Create a performance comparison report for different regions" },
+    { prompt: "Generate insights from healthcare data analysis" },
+    { prompt: "What are the key metrics for measuring business success?" },
+    { prompt: "Create a step-by-step guide for data integration" },
+    { prompt: "Analyze market trends and provide recommendations" }
+  ];
 
   @ViewChild('promptInput') promptInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
+  @ViewChild('messageInput') messageInput!: ElementRef<HTMLTextAreaElement>;
 
-  constructor(private userService: UserService, private apiService: ApiService, private chatService: ChatService, private sanitizer: DomSanitizer, private onboardingService: OnboardingService, private streamService: StreamService,  private route: ActivatedRoute, private router: Router){}
+  constructor(
+    private apiService: ApiService, 
+    private chatService: ChatService, 
+    private onboardingService: OnboardingService,
+    private userService: UserService,
+    private searchChatService: SearchChatService,
+    private loginService: LoginService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    private streamService: StreamService
+  ) {}
 
   ngOnInit() {
-    // if(this.chatService.getIsChatButton()){
-    //   this.createSessionId(this.userId);
-    // }
-    this.getShortcutsPrompt()
-    this.createSessionId(this.userId);
     this.userService.userName$.subscribe(name => {
       this.userName = name;
     });
-
-    this.products = this.onboardingService.getProductList()
-    this.selectedProduct = this.onboardingService.getSelectedProduct();
-
-    // start new chat on clicking the Start New Chat button
-    this.chatService.startNewChatClick$.subscribe(() => {
-      this.sources = [];
-      this.messages = [];
-      this.chatMessages = [];
-      this.createSessionId(this.userId);
-      this.createShortcutPrompt = false;
+    
+    this.userService.userImageUrl$.subscribe(imageUrl => {
+      this.profileImageUrl = imageUrl;
     });
-    // selected question from chat history
-    if(this.chatService.getNewChatHistory()){
-      this.createShortcutPrompt = true;
+    
+    this.searchChatService.searchValue$.subscribe((value: string) => {
+      this.searchValue = value; 
+    });
+
+    this.loginDisplay= this.loginService.getLoginDisplay();
+    
+    // Don't initialize chat history by default - show clean interface
+    // this.initializeDashboardChatHistory();
+  }
+
+  // Voice Recognition methods
+  initializeVoiceRecognition() {
+    if ('webkitSpeechRecognition' in window) {
+      this.voiceRecognition = new (window as any).webkitSpeechRecognition();
+      this.voiceRecognition.continuous = false;
+      this.voiceRecognition.interimResults = false;
+      this.voiceRecognition.lang = 'en-US';
     }
-    // load chat by sessionId from chat history
-    this.route.params.subscribe(() => {
-      this.getChatSession(this.chatService.getSessionId())
-    });
-    // trigger reload on emitted click on chat history
-    this.chatService.click$.subscribe(() => {
-      this.getChatSession(this.chatService.getSessionId())
-      this.createShortcutPrompt = true;
-    });
+  }
 
-    this.chatService.sessionDeleted$.subscribe((deletedSessionId) => {
-      this.alertMessage = deletedSessionId;
+  initializeAudioContext() {
+    if ('AudioContext' in window) {
+      this.audioContext = new AudioContext();
+    }
+  }
+
+  startVoiceInput() {
+    if (this.voiceRecognition) {
+      this.isListening = true;
+      this.voiceRecognition.start();
+      
+      this.voiceRecognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        this.askedQuestion = transcript;
+        this.isListening = false;
+      };
+      
+      this.voiceRecognition.onerror = () => {
+        this.isListening = false;
+      };
+    }
+  }
+
+  // File Upload methods
+  onFileSelected(event: any) {
+    const files: File[] = Array.from(event.target.files);
+    const validFiles: File[] = [];
+    
+    files.forEach((file: File) => {
+      if (file.size > this.maxFileSize) {
+        this.alertMessage = `File ${file.name} is too large. Maximum size is 10MB.`;
+        this.showAlert = true;
+        return;
+      }
+      
+      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+      if (this.supportedFileTypes.includes(extension)) {
+        validFiles.push(file);
+      } else {
+        this.alertMessage = `File type ${extension} is not supported.`;
+        this.showAlert = true;
+      }
+    });
+    
+    if (validFiles.length > 0) {
+      this.selectedFiles = [...this.selectedFiles, ...validFiles];
+      const fileNames = validFiles.map(f => f.name).join(', ');
+      this.alertMessage = `Files uploaded: ${fileNames}`;
       this.showAlert = true;
-    });
+    }
   }
 
-  isProductDropdownOpen = false;
-  toggleProductDropdown() {
-    this.isProductDropdownOpen = !this.isProductDropdownOpen;
+  removeFile(file: File) {
+    this.selectedFiles = this.selectedFiles.filter(f => f !== file);
   }
-  selectProduct(product: string,index: number) {
-    this.selectedProduct = product;
-    this.isProductDropdownOpen = false;
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
-  // post a question and get answer using api call
-  askQuestion(askedQuestion : string ) {
-    const question = askedQuestion.trim();
-    if (!question) return;
-    this.chatStream(question, this.sessionId); 
-    this.askedQuestion = ''; 
+
+  // Message Handling methods
+  onEnterPress(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.askQuestion(this.askedQuestion);
+    }
+  }
+
+  onInputChange() {
+    this.isTyping = this.askedQuestion.length > 0;
+  }
+
+  // AI Features methods
+  askQuestion(question: string) {
+    if (!question.trim() || this.isGenerating) return;
+    
+    const userMessage: ResponseMessage = {
+      sender: 'user',
+      text: question,
+      timestamp: new Date()
+    };
+    
+    this.chatMessages.push(userMessage);
+    this.askedQuestion = '';
+    this.isGenerating = true;
+    
+    // Simulate AI response
+    setTimeout(() => {
+      const botMessage: ResponseMessage = {
+        sender: 'bot',
+        text: `I understand you're asking about "${question}". Let me help you with that.`,
+        timestamp: new Date()
+      };
+      this.chatMessages.push(botMessage);
+      this.isGenerating = false;
+    }, 2000);
+  }
+
+  // Message Actions methods
+  copyMessage(text: string) {
+    navigator.clipboard.writeText(text);
+    this.showToast('Message copied to clipboard');
+  }
+
+  copyCode(code: string) {
+    navigator.clipboard.writeText(code);
+    this.showToast('Code copied to clipboard');
+  }
+
+  editMessage(index: number) {
+    const message = this.chatMessages[index];
+    if (message.sender === 'user') {
+      this.askedQuestion = message.text;
+      this.chatMessages.splice(index, 1);
+    }
+  }
+
+  likeMessage(index: number) {
+    this.chatMessages[index].liked = !this.chatMessages[index].liked;
+    this.chatMessages[index].disliked = false;
+  }
+
+  dislikeMessage(index: number) {
+    this.chatMessages[index].disliked = !this.chatMessages[index].disliked;
+    this.chatMessages[index].liked = false;
+  }
+
+  regenerateResponse(index: number) {
+    const message = this.chatMessages[index];
+    if (message.sender === 'bot') {
+      this.askQuestion(this.chatMessages[index - 1]?.text || '');
+    }
+  }
+
+  // Chat History & Export methods
+  saveChatHistory() {
+    if (this.autoSave) {
+      localStorage.setItem('chatHistory', JSON.stringify(this.chatMessages));
+    }
+  }
+
+  exportChat(format: string) {
+    const content = this.chatMessages.map(msg => 
+      `${msg.sender}: ${msg.text}`
+    ).join('\n\n');
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chat-export.${format.toLowerCase()}`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  // Sharing & Collaboration methods
+  generateShareLink() {
+    const chatData = btoa(JSON.stringify(this.chatMessages));
+    this.shareLink = `${window.location.origin}/chat?data=${chatData}`;
+  }
+
+  addCollaborator(email: string) {
+    if (email && !this.collaborators.includes(email)) {
+      this.collaborators.push(email);
+    }
+  }
+
+  removeCollaborator(email: string) {
+    this.collaborators = this.collaborators.filter(e => e !== email);
+  }
+
+  // Integration Data Handling
+  handleIntegrationDataUpload(data: any) {
+    const notification: ResponseMessage = {
+      sender: 'bot',
+      text: `New file "${data.file.name}" has been uploaded and processed. You can now ask questions about this data.`,
+      timestamp: new Date()
+    };
+    this.chatMessages.unshift(notification);
+  }
+
+  // Utility Functions
+  showToast(message: string) {
+    this.alertMessage = message;
+    this.showAlert = true;
+    setTimeout(() => {
+      this.showAlert = false;
+    }, 3000);
+  }
+
+  scrollToBottom() {
+    setTimeout(() => {
+      if (this.messagesContainer) {
+        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+      }
+    }, 100);
+  }
+
+  // Modal Management
+  openSettings() {
+    this.showSettingsModal = true;
+  }
+
+  closeSettings() {
+    this.showSettingsModal = false;
+  }
+
+  openExportModal() {
+    this.generateShareLink();
+    this.showExportModal = true;
+  }
+
+  closeExportModal() {
+    this.showExportModal = false;
+  }
+
+  openShareModal() {
+    this.generateShareLink();
+    this.showShareModal = true;
+  }
+
+  closeShareModal() {
+    this.showShareModal = false;
+  }
+
+  clearChat() {
+    this.chatMessages = [];
+    this.selectedFiles = [];
+  }
+
+  // Prompts Library
+  openPromptsLibraryModel() {
     this.createShortcutPrompt = true;
   }
-  // get chat using chat id
-  getChat(chat_id: string) {
-    this.apiService.getSelectedQuestion<any>(chat_id).subscribe({
-      next: async (data) => {
-        const raw = data.chat.answer;
-        const extractAnswer = extractAnswerText(raw);
-        const safeAnswer = await convertMarkdown(extractAnswer, this.sanitizer);
-        const question = data.chat.question;
 
-        let answerSource: AnswerSource[] = extractSources(raw); 
-        
-        this.messages.push({ sender: 'user', text:question });
-        this.messages.push({ 
-          sender: 'bot', 
-          text: safeAnswer, 
-          sources: answerSource 
-         });
-      },
-      error: (err) => console.error('Error:', err),
-    });
+  closePromptsLibraryModel() {
+    this.createShortcutPrompt = false;
   }
-  // get session using session id
-  getChatSession(session_id: string) {
-    this.apiService.get<any>(`get_session/${session_id}`).subscribe({
-      next: async (data) => {
-        console.log("Chat within a session : ", data.chat_history)
-        this.processSessionHistory(data.chat_history);
-        this.sessionId = session_id;
-      },
-        error: (err) => console.error('Error:', err),
-      });
-  }
-  
-  // Create a session id using user id
-  createSessionId(userId: any) {
-    const payload = {
-      user_id: userId,
-      app_id: this.app_id
-    };
-    console.log('session id userId bf:', userId);
-    console.log('session id bf:');
-    this.apiService.post<any>('create_session', payload, 'json').subscribe({
-      next: async (data) => {
-        console.log('session id userId:', userId);
-        console.log('session id:', data?.session_id);
-        this.sessionId = data?.session_id;
 
-      },
-      error: (err) => console.error('Error:', err),
-    });
+  addPromptToLibrary() {
+    if (this.createdLibraryPrompt.trim()) {
+      this.promptsLibrarylist.push({ prompt: this.createdLibraryPrompt });
+      this.createdLibraryPrompt = '';
+      // Show success notification
+      this.showNotification('Prompt added successfully!', 'success');
+      // Close the modal after adding
+      this.closePromptsLibraryModel();
+    }
   }
- 
-  // shortcut Prompt
-  promptShortcuts: any[] = []
-  // promptShortcuts = [
-  //   { source: "Suggested by AI", 
-  //     question: "What are the differences between the latest and older release notes?", 
-  //   },
-  //   { source: "Suggested by AI", 
-  //     question: "Create a step-by-step guide on configuring ACI Payment Hub based on client-specific needs", 
-  //   },
-  //   { source: "Based on your Activity", 
-  //     question: "Generate an API customization guide for ACI Payment Hub", 
-  //   },
-  //   { source: "Recommended based on your Activity", 
-  //     question: "Generate a guide on configuring custom dashboards and reports for Connetic High value Payments", 
-  //   },
-  //   { source: "Frequently searched by you", 
-  //     question: "Generate a guide on configuring custom dashboards and reports for Connetic High value Payments", 
-  //   },
-  // ];
-  promptsLibrarylist = [
-    { prompt: "Generate an API customization guide for ACI Payment Hub", 
-    },
-    { prompt: "What are the differences between the latest and older release notes?", 
-    },
-    { prompt: "Explain updates from the latest Release Notes", 
-    },
-    { prompt: "Generate a guide on configuring custom dashboards and reports for Connetic High value Payments", 
-    },
-    { prompt: "Generate an API customization guide for ACI Payment Hub", 
-    },
-    { prompt: "What are the differences between the latest and older release notes?", 
-    },
-    { prompt: "Explain updates from the latest Release Notes", 
-    },
-    { prompt: "Generate a guide on configuring custom dashboards and reports for Connetic High value Payments", 
-    },
-    { prompt: "What are the differences between the latest and older release notes?", 
-    },
-    { prompt: "Explain updates from the latest Release Notes", 
-    },
-    { prompt: "Generate a guide on configuring custom dashboards and reports for Connetic High value Payments", 
-    },
-  ]
-  isPromptsLibraryModelOpen = false
-  closePromptsLibraryModel(){
-    this.isPromptsLibraryModelOpen = false;
-  }
-  openPromptsLibraryModel(){
-    this.isPromptsLibraryModelOpen = true;
-  }
-  
-  addShortcutPrompt(){
-    this.isAddShortcutPrompt = true;
+
+  showNotification(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 9999;
+      max-width: 300px;
+      word-wrap: break-word;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideIn 0.3s ease-out;
+    `;
+
+    // Set background color based on type
+    if (type === 'success') {
+      notification.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    } else if (type === 'error') {
+      notification.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+    } else {
+      notification.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+    }
+
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Remove notification after 3 seconds
     setTimeout(() => {
-      this.promptInput?.nativeElement.focus();
-    }, 0);
-  }
-  saveShortcutPrompt(){
-    this.isAddShortcutPrompt = false;
-    this.promptShortcuts.push({
-      source: "Created by you",
-      question: this.createdPrompt
-    })
-    this.createdPrompt = "";
-  }
-  openDeletePrompt(item: any){
-    this.selectedPrompt = this.selectedPrompt === item ? null : item;
-  }
-  showDeletePrompt(item: any) {
-    this.selectedPrompt = this.selectedPrompt === item ? null : item;
-  }
-  deletePrompt(promptToDelete: any){
-    this.promptShortcuts = this.promptShortcuts.filter(prompt => prompt !== promptToDelete);
-    this.selectedPrompt = null; 
-  }
-
-  addPromptToLibrary(){
-    this.promptsLibrarylist.push({
-      prompt: this.createdLibraryPrompt
-    })
-    this.createdLibraryPrompt = "";
-  }
-  
-  get filteredPrompts() {
-    const query = this.promptsLibrarySearch?.toLowerCase().trim();
-    if (!query) return this.promptsLibrarylist;
-    return this.promptsLibrarylist.filter(p =>
-      p.prompt.toLowerCase().includes(query)
-    );
-  }
-  getHighlightedText(text: string, search: string): SafeHtml {
-    if (!search) return this.sanitizer.bypassSecurityTrustHtml(text);
-  
-    const regex = new RegExp(`(${search})`, 'gi');
-    const highlighted = text.replace(
-      regex,
-      `<span class="custom-highlight">$1</span>`
-    );
-    return this.sanitizer.bypassSecurityTrustHtml(highlighted);
+      if (notification.parentNode) {
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }
+    }, 3000);
   }
 
   deleteLibraryPrompt(itemToDelete: { prompt: string }) {
-    this.promptsLibrarylist = this.promptsLibrarylist.filter(
-      item => item !== itemToDelete
+    this.promptsLibrarylist = this.promptsLibrarylist.filter(item => item !== itemToDelete);
+  }
+
+  getFilteredPrompts() {
+    if (!this.promptsLibrarySearch) {
+      return this.promptsLibrarylist;
+    }
+    return this.promptsLibrarylist.filter(item =>
+      item.prompt.toLowerCase().includes(this.promptsLibrarySearch.toLowerCase())
     );
   }
-  selectedPromptLibrary(prompt: string ){
-    this.chatStream(prompt, this.sessionId);
+
+  getHighlightedText(text: string, searchTerm: string): string {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+  }
+
+  // Shortcuts
+  addShortcutPrompt() {
     this.createShortcutPrompt = true;
-    this.isPromptsLibraryModelOpen = false;
   }
-  selectedShortcutPrompt(prompt: string ){
-    this.chatStream(prompt, this.sessionId);
-    this.isPromptsLibraryModelOpen = false;
-    this.promptsLibrarySearch = "";
+
+  showDeletePrompt(prompt: any) {
+    this.selectedPrompt = prompt;
   }
-  
-  chatResponse = '';
 
-  // Chat Stream
-  chatStream(askedQuestion: string, sessionId: string) {
-    this.chatResponse = '';
-    const question = askedQuestion;
-  
-    const payload = {
-      user_id: this.userId,
-      session_id: sessionId,
-      question,
-      app_id: this.app_id,
-      model_name: this.model_name,
-      top_k: this.top_k,
-      use_cache: true
-    };
-  
-    this.chatMessages.push({ sender: 'user', text: askedQuestion });
-    this.chatMessages.push({ sender: 'bot', text: '<em>...</em>', loading: true });
-    
-    this.streamService.streamChatResponse(
-      payload,
-      chunk => this.chatResponse += chunk,
-      async () => {
-        console.log("Response: ", this.chatResponse)
-        const extractAnswer = extractAnswerText(this.chatResponse);
-        const safeAnswer = await convertMarkdown(extractAnswer, this.sanitizer);
+  deletePrompt(prompt: any) {
+    this.promptShortcuts = this.promptShortcuts.filter(p => p !== prompt);
+    this.selectedPrompt = null;
+  }
 
-        const followUpRaw = extractfollowUpQuestions(this.chatResponse);
-        // const safeFollowUpQuestions = followUpRaw
-        //   ? await convertMarkdown(followUpRaw, this.sanitizer)
-        //   : '';
+  handleFollowUp(question: string) {
+    this.askQuestion(question);
+  }
 
-          const extractedQuestions: string[] = followUpRaw
-          .split('\n')
-          .filter(line => line.trim().startsWith('-'))
-          .map(line => line.replace(/^- /, '').trim());
-        
-        let sources: ResponseSource[] = [];
+  getShortcutsPrompt() {
+    return this.promptShortcuts;
+  }
 
-        sources = extractResponseSources(this.chatResponse);
-        
-        console.log("sources: ", sources); 
-        this.chatMessages = this.chatMessages.filter(msg => !msg.loading);
-        this.chatMessages.push({ 
-          sender: 'bot', 
-          text: safeAnswer,
-          follow_up: extractedQuestions,
-          sources: sources
-        });
+  onDocumentClick() {
+    this.createShortcutPrompt = false;
+  }
 
-        const newSession:ChatHistory = {
-          question: askedQuestion,
-          sessionId: sessionId
-        };
-        this.chatService.setNewSession(newSession)
+  // Add other methods as needed...
+  initializeDashboardChatHistory() {
+    // Clear existing chat history
+    this.chatMessages = [];
+
+    // Add sample chat history based on dashboard sidebar widgets
+    const sampleHistory: ResponseMessage[] = [
+      {
+        sender: 'user',
+        text: 'Show me the latest dashboard insights and metrics',
+        timestamp: new Date(Date.now() - 3600000) // 1 hour ago
       },
-      err => {
-        console.error('Stream error:', err);
+      {
+        sender: 'bot',
+        text: 'Here are the latest insights from your dashboard:\n\n**📊 Key Performance Metrics:**\n• **Total Revenue**: $2.4M (↑15.2% vs last month)\n• **Active Users**: 12,847 (↑8.7% vs last month)\n• **Transaction Volume**: 45,892 (↑12.3% vs last month)\n• **Customer Satisfaction**: 94.2% (↑2.1% vs last month)\n\n**🎯 Top Performing Areas:**\n• **Payment Processing**: 99.8% success rate\n• **API Response Time**: 245ms average\n• **System Uptime**: 99.97%\n• **Data Integration**: 98.5% accuracy\n\n**📈 Growth Trends:**\n• Mobile transactions up 23%\n• Healthcare analytics usage increased 45%\n• Customer portal engagement up 18%\n\nWould you like me to analyze any specific metric in detail?',
+        timestamp: new Date(Date.now() - 3500000)
       }
-    );
+    ];
+
+    this.chatMessages = sampleHistory;
   }
-
-  private async processSessionHistory(chatHistory: any[]) {
-
-    const history: any[] = [];
-
-    for (const data of chatHistory) {
-      if (data?.chat?.question) {
-        history.push({
-          sender: 'user',
-          text: data.chat.question
-        });
-      }
-
-      if (data?.chat?.answer) {
-        const extractAnswer = extractAnswerText(data.chat.answer);
-        const safeAnswer = await convertMarkdown(extractAnswer, this.sanitizer)
-        ;
-        const followUpRaw = extractfollowUpQuestions(this.chatResponse);
-        const safeFollowUpQuestions = followUpRaw
-          ? await convertMarkdown(followUpRaw, this.sanitizer)
-          : '';
-
-        const sources = extractResponseSources(data.chat.answer);
-
-        history.push({
-          sender: 'bot',
-          text: safeAnswer,
-          follow_up_questions: safeFollowUpQuestions,
-          sources: sources
-        });
-      }
-    }
-
-    this.chatMessages = [...history];
-  }
-  // Follow up question
-  handleFollowUp(followUpQuestion: string) {
-    this.chatStream(followUpQuestion, this.sessionId); 
-  }
-  // Shortcuts prompt 
-  getShortcutsPrompt(): void {
-    this.apiService.get<any>('app/list/apps').subscribe({
-      next: (data) => {
-        const apps = data || [];
-        const preDefinedQuestions: string[] = apps[0]?.pre_defined_questions || [];
-  
-        console.log("Predefined Questions:", preDefinedQuestions);
-  
-        this.promptShortcuts = preDefinedQuestions.map((question: string) => ({
-          source: "Suggested by AI",
-          question
-        }));
-      },
-      error: (err) => {
-        console.error('Failed to fetch app list:', err);
-      }
-    });
-  }
-  
-  // outside click detection
-  @ViewChild('menuRef') menuRef!: ElementRef;
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const clickedInside = this.menuRef?.nativeElement.contains(event.target);
-    if (!clickedInside) {
-      this.selectedPrompt = null;
-    }
-  }
-
 }

@@ -21,4 +21,9 @@ export class InsitesCardComponent {
   viewMore(){
     this.router.navigate(['/dashboard-page/chat']);
   }
+
+  openInsitesChat() {
+    // Dispatch a custom event to open the chatbot
+    window.dispatchEvent(new CustomEvent('openInsitesChat'));
+  }
 }

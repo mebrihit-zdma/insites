@@ -4,15 +4,14 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { LoginService } from '../../services/login.service';
 import { SearchChatService } from '../../services/search-chat.service';
-import { ChatHistoryComponent } from '../../components/chat-history/chat-history.component';
 import { ChatService } from '../../services/chat.service';
-import { DocumentationService } from '../../services/documentation.service';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-left-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule, ChatHistoryComponent, FormsModule ],
+  imports: [RouterModule, CommonModule, FormsModule ],
   templateUrl: './left-sidebar.component.html',
   styleUrl: './left-sidebar.component.css'
 })
@@ -20,17 +19,14 @@ export class LeftSidebarComponent {
   
   loginDisplay: boolean = false;
 
-  constructor(private userService: UserService, private loginService: LoginService, private searchChatService: SearchChatService, private chatService: ChatService, private documentationService: DocumentationService, private router: Router) {
+  constructor(private userService: UserService, private loginService: LoginService, private searchChatService: SearchChatService, private chatService: ChatService, private router: Router) {
   }
   
   userName: string | null = 'User Name';
   userRole: string | null = 'Marketing Manager';
   profileImageUrl: string | null = null;
   searchValue: string = "";
-  // documentation Pages
-  documentationLandingPage = false;
-  documentationGeneratingPage = false; 
-  documentationGeneratedPage = false; 
+ 
   ngOnInit() {
     this.userService.userName$.subscribe(name => {
       this.userName = name;
@@ -39,10 +35,6 @@ export class LeftSidebarComponent {
     this.userService.userImageUrl$.subscribe(imageUrl => {
       this.profileImageUrl = imageUrl;
     });
-    // documentation Pages
-    this.documentationLandingPage = this.documentationService.getDocumentationLandingPage();
-    this.documentationGeneratingPage = this.documentationService.getDocumentationGeneratingPage(); 
-    this.documentationGeneratedPage = this.documentationService.getDocumentationGeneratedPage();
     
     this.searchChatService.searchValue$.subscribe(value => {
       this.searchValue = value; 
@@ -60,9 +52,14 @@ export class LeftSidebarComponent {
       label: 'Dashboard',
     },
     {
-      routeLink: 'documentation',
-      icon: 'feed',
+      routeLink: 'document',
+      icon: 'description',
       label: 'Documentation',
+    },
+    {
+      routeLink: 'integrations',
+      icon: 'integration_instructions',
+      label: 'Integrations',
     },
     {
       routeLink: 'chat',
@@ -78,10 +75,6 @@ export class LeftSidebarComponent {
     {
       icon: 'search',
       label: 'Search Previous Chats',
-    },
-    {
-      icon: 'history',
-      label: 'Chat History',
     },
   ];
   toggleCollapse(): void {
@@ -110,9 +103,18 @@ export class LeftSidebarComponent {
     this.chatService.startNewChatEmitClick();
     this.router.navigate(['/dashboard-page/chat']);
   };
+
+  // search previous chats click event listener
+  searchPreviousChats(){
+    this.router.navigate(['/dashboard-page/chat']);
+  };
  
   onInputChange(value: string): void {
-    this.searchChatService.setSearchValue(value)
+    this.searchChatService.setSearchValue(value);
+    // If search value is not empty, navigate to chat page to show search results
+    if (value.trim()) {
+      this.router.navigate(['/dashboard-page/chat']);
+    }
   }
   chatButton() {
     this.chatService.setIsChatButton(true)

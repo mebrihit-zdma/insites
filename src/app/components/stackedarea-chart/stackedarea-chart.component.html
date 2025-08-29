@@ -1,7 +1,24 @@
+<div class="chart-container">
+  <div class="chart-header">
+    <div class="header-right">
+      <div class="legend-item" (click)="toggleDataset(0)" [class.disabled]="chartData[0].hidden">
+        <div class="legend-marker speech-marker"></div>
+        <span class="legend-label">Speech</span>
+        <span class="legend-value">32.8%</span>
+      </div>
+      <div class="legend-item" (click)="toggleDataset(1)" [class.disabled]="chartData[1].hidden">
+        <div class="legend-marker vision-marker"></div>
+        <span class="legend-label">Vision</span>
+        <span class="legend-value">32.8%</span>
+      </div>
+    </div>
+  </div>
+  <div class="chart-wrapper">
     <canvas baseChart
-      [datasets]="areaChartData"
-      [labels]="areaChartLabels"
-      [options]="areaChartOptions"
-      [type]="areaChartType"
-      [legend]="areaChartLegend">
+      [datasets]="chartData"
+      [labels]="chartLabels"
+      [options]="chartOptions"
+      [type]="chartType">
     </canvas>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Avatar">
+<rect width="40" height="40" rx="20" fill="var(--fill-0, #EEEEEE)"/>
+<path id="Vector" d="M18.4 13.7561H13.6C12.72 13.7561 12.008 14.4586 12.008 15.3171L12 24.6829C12 25.5414 12.72 26.2439 13.6 26.2439H26.4C27.28 26.2439 28 25.5414 28 24.6829V16.8781C28 16.0195 27.28 15.3171 26.4 15.3171H20L18.4 13.7561Z" fill="var(--fill-0, #737780)"/>
+</g>
+</svg>
